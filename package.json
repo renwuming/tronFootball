@@ -10,14 +10,6 @@
     "build": "cross-env NODE_ENV=production webpack --progress --hide-modules"
   },
   "dependencies": {
-    "vue": "^2.5.11"
-  },
-  "browserslist": [
-    "> 1%",
-    "last 2 versions",
-    "not ie <= 8"
-  ],
-  "dependencies": {
     "animate.css": "^3.5.2",
     "axios": "^0.16.2",
     "element-ui": "^2.3.9",
@@ -26,6 +18,11 @@
     "vue-awesome-swiper": "^2.5.0",
     "vue-router": "^2.6.0"
   },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not ie <= 8"
+  ],
   "devDependencies": {
     "autoprefixer": "^7.1.1",
     "babel-core": "^6.0.0",
@@ -33,6 +30,7 @@
     "babel-plugin-transform-object-rest-spread": "^6.23.0",
     "babel-plugin-transform-runtime": "^6.23.0",
     "babel-preset-env": "^1.5.1",
+    "babel-preset-stage-3": "^6.24.1",
     "cross-env": "^3.0.0",
     "css-loader": "^0.25.0",
     "extract-text-webpack-plugin": "^2.1.2",
