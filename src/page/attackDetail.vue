@@ -79,7 +79,7 @@
 
 <script>
 import player from "../components/miniPlayer";
-import handleStr from './handleStr'
+import handleStr from "./handleStr";
 
 export default {
   components: {
@@ -88,20 +88,17 @@ export default {
   data() {
     return {
       defenseList: [1, 2],
-      liveStr: '',
+      liveStr: ""
     };
   },
   computed: {},
   methods: {
-    handleLiveStr() {
-      handleStr.apply(this)
-    },
   },
   mounted() {
-    const myList = ['任无名', '赵无极', '韩如梦', '落霞雨', '任正天']
-    const enemyList = ['敌方1','敌方2','敌方3','敌方4','敌方守门员',]
-    const resultList = [2, 1]
-    this.handleLiveStr(myList.concat(enemyList), ...resultList)
+    const myList = ["任无名", "赵无极", "韩如梦", "落霞雨", "任正天"];
+    const enemyList = ["敌方1", "敌方2", "敌方3", "敌方4", "敌方守门员"];
+    const resultList = [2, 1];
+    handleStr.apply(this, [myList.concat(enemyList), ...resultList]);
   }
 };
 </script>

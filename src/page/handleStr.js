@@ -1,40 +1,29 @@
 export default async function (pList, myScore, enemyScore) {
   let list = [],
-    roundListMe = new Array(myScore),
-    roundList = new Array(enemyScore)
+    roundListMe = new Array(myScore).fill(0),
+    roundList = new Array(enemyScore).fill(0)
   list = list.concat(roundListMe.map(_ => {
-    return createWinRound(pList)
+    return createWinRound()
   }))
   list = list.concat(roundList.map(_ => {
-    return createLoseRound(pList)
+    return createLoseRound()
   }))
-  // await add(this, '球员A带球过人')
-  // await sleep(1000)
-  // await add(this, '\n球员B带球过人')
-  // await sleep(1000)
-  // await add(this, '\n球员A带球过人')
-  // await sleep(1000)
-  // await add(this, '\n球员B带球过人')
-  // await sleep(1000)
-  // await add(this, '\n球员A带球过人')
-  // await sleep(1000)
-  // await add(this, '\n球员B带球过人')
-  // await sleep(1000)
-  // await add(this, '\n球员A带球过人')
-  // await sleep(1000)
-  // await add(this, '\n球员B带球过人')
-  // await sleep(1000)
-  // await add(this, '\n球员A带球过人')
-  // await sleep(1000)
-  // await add(this, '\n球员B带球过人')
-  // await sleep(1000)
+  list.sort((a,b) => Math.random()-.5)
+
+  for(let i=0;i<list.length;i++) {
+    await handleRound(list[i])
+  }
 }
 
-function createWinRound(pList) {
+function createWinRound() {
+  return [0,2,5,6,1]
+}
+function createLoseRound() {
+  return [0,1,5,8,2,6]
+}
+
+async function handleRound(list) {
   
-}
-
-function createLoseRound(pList) {
   
 }
 
