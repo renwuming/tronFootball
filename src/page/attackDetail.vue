@@ -4,37 +4,37 @@
       <div class="line left">
         <div class="item">
           <div class='player-box'>
-            <player></player>
+            <player :data="defenseList[0]"></player>
           </div>
         </div>
         <div class="item">
           <div class='player-box'>
-            <player></player>
+            <player :data="defenseList[1]"></player>
           </div>
         </div>
       </div>
       <div class="line left">
         <div class="item">
           <div class='player-box'>
-            <player></player>
+            <player :data="defenseList[2]"></player>
           </div>
         </div>
         <div class="item">
           <div class='player-box'>
-            <player></player>
+            <player :data="defenseList[3]"></player>
           </div>
         </div>
       </div>
       <div class="line">
         <div class="item">
           <div class='player-box'>
-            <player></player>
+            <player :data="defenseList[4]"></player>
           </div>
         </div>
         <i class="mid-icon fa fa-futbol-o" aria-hidden="true"></i>
         <div class="item me">
           <div class='player-box'>
-            <player></player>
+            <player ></player>
           </div>
         </div>
       </div>
@@ -87,7 +87,8 @@ export default {
   },
   data() {
     return {
-      defenseList: [1, 2],
+      defenseList: this.$route.query.team,
+      attackList:[],
       liveStr: '',
     };
   },
@@ -97,8 +98,10 @@ export default {
       handleStr.apply(this)
     },
   },
-  mounted() {
-    this.handleLiveStr()
+  async mounted() {
+    this.handleLiveStr();
+
+
   }
 };
 </script>
