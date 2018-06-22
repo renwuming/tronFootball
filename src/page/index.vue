@@ -3,7 +3,7 @@
     v-loading='loading'>
     <ul class='player-list'>
       <li v-for='item in playerList' :key='item'>
-        <player></player>
+        <player :data="tiem"></player>
         <p class='price'>0.11 NAS</p>
         <el-button class='buy-btn'>购买</el-button>
       </li>
@@ -21,6 +21,10 @@
 // import {login} from '../api'
 import Vue from 'vue'
 import player from "../components/player";
+let dappaddress = 'n1e2ooLb5Fzgrbmg6DrKCd4p7SHVPUyDz46';
+let to = dappaddress;
+
+
 
 export default {
   props: [],
@@ -29,13 +33,51 @@ export default {
   },
   data() {
     return {
-      playerList: [1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 2],
+      playerList: [],
       loading: true,
     };
   },
   computed: {},
   methods: {},
   mounted() {
+
+    let value = 0;
+    let callFunction = "foreach_sale_card";
+    let callArgs = "";
+    this.$NebPay.simulateCall(to,value,callFunction,callArgs,{
+      listener:(resp) => {
+        console.log("result----------" + resp.result)
+        let parts = resp.result.split("_");
+        let players = {
+          player_id : 0,
+          shoot : 0,
+          defend : 0,
+          speed : 0,
+          shoot_factor : 0,
+          defend_factor : 0,
+          speed_factor : 0,
+          player_role : 0,
+          growth : 0
+        }
+        for(let j=0;j<parts.length;j++){
+          let detail = parts[j].split("~");
+          players.player_id = detail[0];
+          players.shoot = detail[1];
+          players.defend = detail[2];
+          players.speed = detail[3];
+          players.shoot_factor = detail[4];
+          players.defend_factor = detail[5];
+          players.speed_factor = detail[6];
+          players.player_role = detail[7];
+          players.growth = detail[8];
+
+        this.playerList[j] = players;
+        }
+        console.log(this.playerList[0].player_id);
+      }
+
+      })
+
     setTimeout(_ => {
       this.loading = false
     }, 500)

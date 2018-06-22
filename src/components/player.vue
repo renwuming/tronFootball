@@ -30,6 +30,7 @@ export default {
       default: true,
     },
     small: Boolean,
+    data: Object,
   },
   components: {},
   data() {

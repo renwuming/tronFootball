@@ -8,9 +8,13 @@ import http from "./api"
 import filter from './filter'
 import myPublic from './assets/js/common.js'
 
+
 Vue.use(ElementUI)
 Vue.use(myPublic)
 Vue.use(filter)
+
+const NebPay = _require('nebpay')
+Vue.prototype.$NebPay = new NebPay()
 
 new Vue({
   el: '#app',
