@@ -4,37 +4,37 @@
       <div class="line left">
         <div class="item">
           <div class='player-box'>
-            <player></player>
+            <player :data="defenseList[0]"></player>
           </div>
         </div>
         <div class="item">
           <div class='player-box'>
-            <player></player>
+            <player :data="defenseList[1]"></player>
           </div>
         </div>
       </div>
       <div class="line left">
         <div class="item">
           <div class='player-box'>
-            <player></player>
+            <player :data="defenseList[2]"></player>
           </div>
         </div>
         <div class="item">
           <div class='player-box'>
-            <player></player>
+            <player :data="defenseList[3]"></player>
           </div>
         </div>
       </div>
       <div class="line">
         <div class="item">
           <div class='player-box'>
-            <player></player>
+            <player :data="defenseList[4]"></player>
           </div>
         </div>
         <i class="mid-icon fa fa-futbol-o" aria-hidden="true"></i>
         <div class="item me">
           <div class='player-box'>
-            <player></player>
+            <player ></player>
           </div>
         </div>
       </div>
@@ -87,18 +87,20 @@ export default {
   },
   data() {
     return {
-      defenseList: [1, 2],
-      liveStr: ""
+      defenseList: this.$route.query.team,
+      attackList:[],
+      liveStr: '',
     };
   },
   computed: {},
   methods: {
   },
-  mounted() {
+  async mounted() {
     const myList = ["任无名", "赵无极", "韩如梦", "落霞雨", "任正天"];
     const enemyList = ["敌方1", "敌方2", "敌方3", "敌方4", "敌方守门员"];
     const resultList = [2, 1];
     handleStr.apply(this, [myList.concat(enemyList), ...resultList]);
+
   }
 };
 </script>

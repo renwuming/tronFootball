@@ -4,7 +4,7 @@
   >
     <ul class='defense-list'>
       <li v-for='item in defenseList' :key='item'>
-        <p class='attack-btn hand no-hover' @click='attack'>
+        <p class='attack-btn hand no-hover' @click='attack(item)'>
           <i class="fa fa-futbol-o" aria-hidden="true"></i>
           <span>挑战</span>
         </p>
@@ -43,9 +43,10 @@ export default {
   },
   computed: {},
   methods: {
-    attack() {
+    attack(en_team) {
       // this.attackModalShow = true;
-      this.$router.push({name: 'attackDetail'})
+
+      this.$router.push({name: 'attackDetail', query: {team: en_team}})
     }
   },
   async mounted() {

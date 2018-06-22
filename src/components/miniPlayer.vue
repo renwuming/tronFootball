@@ -1,14 +1,14 @@
 <template>
   <div class='wrapper'>
-    <h1>贝克汉姆</h1>
+    <h1>{{data.player_name}}</h1>
     <div class="detail">
       <div class="img-box">
         <img src="http://www.renwuming.cn/static/car-game/portrait.jpg">
       </div>
       <div class='value-box'>
-        <p>进攻 200</p>
-        <p>防守 200</p>
-        <p>速度 200</p>
+        <p>进攻 {{+data.shoot + +data.shoot_factor * +data.growth}}</p>
+        <p>防守 {{+data.defend + +data.defend_factor * +data.growth}}</p>
+        <p>速度 {{+data.speed + +data.speed_factor * +data.growth}}</p>
       </div>
     </div>
   </div>
@@ -16,7 +16,9 @@
 
 <script>
 export default {
-  props: {},
+  props: {
+    data : Object,
+  },
   components: {},
   data() {
     return {};
