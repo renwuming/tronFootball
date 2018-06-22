@@ -60,6 +60,7 @@
     <el-dialog
       :visible.sync="detailShow"
       :show-close="false"
+      :lock-scroll='false'
       class='detail-dialog'
       width="80%">
       <detail :value='detailPlayer'></detail>

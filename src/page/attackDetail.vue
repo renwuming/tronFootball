@@ -64,9 +64,7 @@
       </div>
     </div>
     <div class="live-box">
-      <div class="text-live">
-
-      </div>
+      <div class="text-live">{{liveStr}}</div>
       <el-button class='skip-btn'>跳过</el-button>
     </div>
     <!-- <ul class='defense-list'>
@@ -81,6 +79,7 @@
 
 <script>
 import player from "../components/miniPlayer";
+import handleStr from './handleStr'
 
 export default {
   components: {
@@ -88,11 +87,19 @@ export default {
   },
   data() {
     return {
-      defenseList: [1, 2]
+      defenseList: [1, 2],
+      liveStr: '',
     };
   },
   computed: {},
-  methods: {}
+  methods: {
+    handleLiveStr() {
+      handleStr.apply(this)
+    },
+  },
+  mounted() {
+    this.handleLiveStr()
+  }
 };
 </script>
 
@@ -100,10 +107,10 @@ export default {
 .content {
   display: flex;
   align-items: flex-start;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.7);
   padding: 20px;
   .battle-box {
-    width: 50%;
+    width: 60%;
     display: flex;
     flex-direction: column;
     padding: 20px;
@@ -125,7 +132,7 @@ export default {
       display: flex;
       justify-content: center;
       text-align: center;
-      margin-right: 40px;
+      margin-right: 20px;
       background-color: rgba(233, 23, 32, 0.7);
       border-radius: 10px;
       position: relative;
@@ -138,7 +145,7 @@ export default {
     }
   }
   .live-box {
-    width: 50%;
+    width: 40%;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -146,7 +153,9 @@ export default {
     .text-live {
       width: 100%;
       height: 700px;
+      padding: 10px;
       background-color: rgba(255, 255, 255, 0.5);
+      white-space: pre-wrap;
     }
     .skip-btn {
       width: 80%;
@@ -162,5 +171,6 @@ export default {
 .mid-icon {
   font-size: 100px;
   color: #aaa;
+  margin-right: 20px;
 }
 </style>

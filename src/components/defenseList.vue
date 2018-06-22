@@ -51,7 +51,7 @@ export default {
         position: absolute;
         bottom: 0;
         left: 0;
-        background-color: #663300;
+        background-color: rgb(236, 185, 30);
         width: 100%;
         height: 40px;
         line-height: 40px;

@@ -6,8 +6,9 @@
         <img src="http://www.renwuming.cn/static/car-game/portrait.jpg">
       </div>
       <div class='value-box'>
-        <p>进攻 / 防守 / 速度</p>
-        <p>200 / 200 / 200</p>
+        <p>进攻 200</p>
+        <p>防守 200</p>
+        <p>速度 200</p>
       </div>
     </div>
   </div>
@@ -40,7 +41,7 @@ export default {
     margin-top: 10px;
     .value-box {
       margin-left: 10px;
-      width: 124px;
+      width: 70px;
     }
   }
   h1 {

@@ -44,7 +44,7 @@ export default {
           }
         },
         radar: {
-          radius: "90%",
+          radius: "70%",
           center: ["50%", "66%"],
           name: {
             textStyle: {
@@ -91,7 +91,7 @@ export default {
         ]
       }
       const colorMap = ["#FF0033","#FFCC33","#0099CC"]
-      const nameMap = ['攻击','防守','速度']
+      const nameMap = ['进攻','防守','速度']
       const [attack, defense, speed] = this.value
       obj.series[0].data[0].value = this.value
       obj.radar.indicator = this.value.map((value,index) => {

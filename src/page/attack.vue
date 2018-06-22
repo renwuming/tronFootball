@@ -83,6 +83,7 @@ export default {
         padding: 10px 0;
         margin-right: 30px;
         i {
+          margin-top: 10px;
           font-size: 90px;
         }
         span {
