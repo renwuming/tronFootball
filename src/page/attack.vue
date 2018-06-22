@@ -2,7 +2,7 @@
   <div class="content">
     <ul class='defense-list'>
       <li v-for='item in defenseList' :key='item'>
-        <p class='attack-btn hand' @click='attack'>
+        <p class='attack-btn hand no-hover' @click='attack'>
           <i class="fa fa-futbol-o" aria-hidden="true"></i>
           <span>挑战</span>
         </p>
@@ -40,19 +40,19 @@ export default {
   props: [],
   components: {
     player,
-    defenseList,
+    defenseList
   },
   data() {
     return {
       defenseList: [1, 2, 3],
-      attackModalShow: false,
+      attackModalShow: false
     };
   },
   computed: {},
   methods: {
     attack() {
-      this.attackModalShow = true
-    },
+      this.attackModalShow = true;
+    }
   }
 };
 </script>
@@ -70,7 +70,7 @@ export default {
     width: 100%;
     li {
       width: 100%;
-      background-color:rgba(255,255,255,.5);
+      background-color: rgba(255, 255, 255, 0.5);
       border-radius: 10px;
       padding: 10px 20px;
       display: flex;
@@ -104,8 +104,5 @@ export default {
   .page-list {
     margin-top: 20px;
   }
-}
-.hand:hover {
-  text-decoration: none;
 }
 </style>

@@ -71,7 +71,7 @@ export default {
 <style lang='scss'>
 body {
   background-color: #2b5836;
-  background: url(./assets/bk.jpg) top center/cover repeat-y;
+  background: url(./assets/img/bk.jpg) top center/cover repeat-y;
   background-size: 100% auto;
   .el-message-box {
     width: auto;
@@ -93,6 +93,9 @@ h1 {
 }
 .hand:hover {
   text-decoration: underline;
+}
+.no-hover:hover {
+  text-decoration: none;
 }
 .el-dialog__footer {
   padding-bottom: 10px;

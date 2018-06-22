@@ -3,7 +3,10 @@
     <ul class='player-list'>
       <li v-for='item in playerList' :key='item.id'>
         <player></player>
-        <el-button class='buy-btn'>卖出</el-button>
+        <div class='btn-list'>
+          <el-button class='buy-btn'>卖出</el-button>
+          <img src="../assets/img/info.png" class='info-btn hand' @click='showDetail'>
+        </div>
       </li>
     </ul>
     <div class="defense-box">
@@ -52,47 +55,44 @@
         <p class='confirm-btn hand' @click="firstShow = false">确 定</p>
       </span>
     </el-dialog>
+
+
+    <el-dialog
+      :visible.sync="detailShow"
+      :show-close="false"
+      class='detail-dialog'
+      width="80%">
+      <detail></detail>
+      <span slot="footer" class="dialog-footer">
+        <p class='confirm-btn hand' @click="detailShow = false">确 定</p>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import player from "../components/player";
+import detail from "../components/detail";
 
 export default {
   props: [],
   components: {
-    player
+    player,
+    detail
   },
   data() {
     return {
-      playerList: [
-        1,
-        2,
-        3,
-        4,
-        5,
-        6,
-        7,
-        8,
-        1,
-        2,
-        3,
-        3,
-        3,
-        3,
-        3,
-        3,
-        3,
-        3,
-        3,
-        3,
-        3
-      ],
-      firstShow: true,
+      playerList: [1, 2, 3, 4, 5, 6],
+      firstShow: false,
+      detailShow: false
     };
   },
   computed: {},
-  methods: {}
+  methods: {
+    showDetail() {
+      this.detailShow = true;
+    }
+  }
 };
 </script>
 
@@ -108,8 +108,8 @@ export default {
     flex-wrap: wrap;
     display: flex;
     li {
-      width: 200px;
-      height: 350px;
+      width: 260px;
+      height: 400px;
       margin-right: 20px;
       text-align: center;
       background-color: #fff;
@@ -122,6 +122,17 @@ export default {
         background-color: #3cac54;
         border-color: #3cac54;
         border-radius: 60px;
+      }
+      .btn-list {
+        position: relative;
+        text-align: center;
+        .info-btn {
+          position: absolute;
+          right: 0;
+          top: 7px;
+          width: 25px;
+          height: auto;
+        }
       }
     }
   }
@@ -181,3 +192,18 @@ export default {
   }
 }
 </style>
+<style lang='scss'>
+.detail-dialog {
+  .el-dialog {
+    background-color: #999 !important;
+    border-radius: 10px;
+    border: 2px solid #fff;
+  }
+  .confirm-btn {
+    background-color: transparent;
+    border: 1px solid #fff;
+  }
+}
+
+</style>
+
