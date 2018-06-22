@@ -1,5 +1,7 @@
 <template>
-  <div class="content">
+  <div class="content"
+    v-loading="loading"
+  >
     <ul class='defense-list'>
       <li v-for='item in defenseList' :key='item'>
         <p class='attack-btn hand no-hover' @click='attack'>
@@ -7,7 +9,7 @@
           <span>挑战</span>
         </p>
         <div class="defense-players">
-          <defense-list></defense-list>
+          <defense-list :list="item"></defense-list>
         </div>
       </li>
     </ul>
@@ -34,8 +36,9 @@ export default {
   },
   data() {
     return {
-      defenseList: [1, 2, 3],
-      attackModalShow: false
+      defenseList: [],
+      attackModalShow: false,
+      loading: true,
     };
   },
   computed: {},
@@ -44,6 +47,47 @@ export default {
       // this.attackModalShow = true;
       this.$router.push({name: 'attackDetail'})
     }
+  },
+  async mounted() {
+    let totallist = [];
+    let list = await this.$simulateCall(0, "foreach_rank_card", "");
+    let toplist = list.split("_");
+    for (let i=0;i<toplist.length;i++){
+      let single_team = [];
+      let ele = toplist[i].replace(/\"/g,"").split(":");
+      // toplist_j[ele[0]] = ele[1];
+      let callArgs_d = `["${ele[1]}"]`;
+      // console.log(callArgs_d);
+      let detail = await this.$simulateCall(0, "get_user_player", callArgs_d);
+      let team = JSON.parse(detail)["team"].split("_").slice(1,6);
+      for (let j=0;j<5;j++){
+        let member_j = {};
+        let callArgs_m = `["${team[j]}"]`;
+        let member = await this.$simulateCall(0, "get_card_id", callArgs_m);
+        let member_num = member.replace(/\"/g,"").split(",")
+        member_j["player_id"] = member_num[0];
+        member_j["player_name"] = member_num[1];
+        member_j["shoot"] = member_num[2];
+        member_j["defend"] = member_num[3];
+        member_j["speed"] = member_num[4];
+        member_j["shoot_factor"] = member_num[5];
+        member_j["defend_factor"] = member_num[6];
+        member_j["speed_factor"] = member_num[7];
+        member_j["player_role"] = member_num[8];
+        member_j["growth"] = member_num[9];
+        // single_team.push(member);
+        single_team.push(member_j);
+
+      }
+      // toplist_d.push(ele[1]);
+      totallist.push(single_team);
+    }
+
+    this.defenseList = totallist;
+    // console.log("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"+totallist[0][1].speed)
+
+    this.loading = false
+
   }
 };
 </script>

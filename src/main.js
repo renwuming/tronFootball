@@ -15,7 +15,7 @@ Vue.use(filter)
 
 const NebPay = _require('nebpay')
 Vue.prototype.$NebPay = new NebPay()
-const addr = 'n232LxyYBBRrbHvFq1DJ69NgB7og8hav6Sv'
+const addr = 'n1ougAE7NYRV5ySjbZMtzypyyJb8segK8pr';
 Vue.prototype.$addr = addr
 
 Vue.prototype.$simulateCall = function(value, callFunction, callArgs) {
