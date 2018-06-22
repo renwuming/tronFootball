@@ -1,19 +1,19 @@
 <template>
   <div class='wrapper' :class="{small: small}">
-    <h1>贝克汉姆</h1>
-    <span v-if="market">成长值：<var>66</var></span>
+    <h1>{{data.player_name}}</h1>
+    <span v-if="market">成长值：<var>{{data.growth}}</var></span>
     <div class="img-box">
       <img src="http://www.renwuming.cn/static/car-game/portrait.jpg">
     </div>
     <template v-if='!small'>
       <p class="line">
-        进攻：<var>200</var>
+        进攻：<var>{{+data.shoot + +data.shoot_factor * +data.growth}}</var>
       </p>
       <p class="line">
-        防守：<var>200</var>
+        防守：<var>{{+data.defend + +data.defend_factor * +data.growth}}</var>
       </p>
       <p class="line">
-        速度：<var>200</var>
+        速度：<var>{{+data.speed + +data.speed_factor * +data.growth}}</var>
       </p>
     </template>
     <template v-else>
