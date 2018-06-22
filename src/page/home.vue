@@ -1,48 +1,75 @@
 <template>
-  <div class="content">
+  <div class="content"
+    v-loading='loading'
+  >
     <ul class='player-list'>
-      <li v-for='item in playerList' :key='item.id'>
-        <player></player>
+      <li v-for='(item,index) in playerList' :key='item.id'>
+        <player :data='item'></player>
         <div class='btn-list'>
-          <el-button class='buy-btn'>卖出</el-button>
-          <img src="../assets/img/info.png" class='info-btn hand' @click='showDetail'>
+          <el-button v-show='!editTeam&&!teamMap[item.cardId]' class='buy-btn' @click='sale(index)'>卖出</el-button>
+          <el-button v-show='editTeam&&(waitSelectIndex!=0||item.position==2&&waitSelectIndex==0)' class='select-btn' @click='choose(index)'>选择</el-button>
+          <img src="../assets/img/info.png" class='info-btn hand' @click='showDetail(index)'>
         </div>
       </li>
     </ul>
     <div class="defense-box">
       <div class="line">
-        <div class="item">
-          <i class="fa fa-question-circle" aria-hidden="true"></i>
-          <div class="bottom-btn hand">选择前锋</div>
-        </div>
-        <div class="item">
+        <div v-show='teamList[4]' class="item">
           <div class='player-box'>
-            <player></player>
-            <div class="bottom-btn hand">替换前锋</div>
+            <player :data='teamPList[4]'></player>
           </div>
+          <div class="bottom-btn hand unselect" @click='unselect(4)'>替换球员</div>
+        </div>
+        <div v-show='!teamList[4]' class='item' :class='{selecting: waitSelectIndex==4}'>
+          <i class="fa fa-question-circle" aria-hidden="true"></i>
+          <div class="bottom-btn hand" @click='select(4)'>选择球员</div>
+        </div>
+        <div v-show='teamList[3]' class="item">
+          <div class='player-box'>
+            <player :data='teamPList[3]'></player>
+          </div>
+          <div class="bottom-btn hand unselect" @click='unselect(3)'>替换球员</div>
+        </div>
+        <div v-show='!teamList[3]' class='item' :class='{selecting: waitSelectIndex==3}'>
+          <i class="fa fa-question-circle" aria-hidden="true"></i>
+          <div class="bottom-btn hand" @click='select(3)'>选择球员</div>
         </div>
       </div>
       <div class="line">
-        <div class="item">
-          <i class="fa fa-question-circle" aria-hidden="true"></i>
-          <div class="bottom-btn hand">选择后卫</div>
-        </div>
-        <div class="item">
+        <div v-show='teamList[2]' class="item">
           <div class='player-box'>
-            <player></player>
-            <div class="bottom-btn hand">替换后卫</div>
+            <player :data='teamPList[2]'></player>
           </div>
+          <div class="bottom-btn hand unselect" @click='unselect(2)'>替换球员</div>
+        </div>
+        <div v-show='!teamList[2]' class='item' :class='{selecting: waitSelectIndex==2}'>
+          <i class="fa fa-question-circle" aria-hidden="true"></i>
+          <div class="bottom-btn hand" @click='select(2)'>选择球员</div>
+        </div>
+        <div v-show='teamList[1]' class="item">
+          <div class='player-box'>
+            <player :data='teamPList[1]'></player>
+          </div>
+          <div class="bottom-btn hand unselect" @click='unselect(1)'>替换球员</div>
+        </div>
+        <div v-show='!teamList[1]' class='item' :class='{selecting: waitSelectIndex==1}'>
+          <i class="fa fa-question-circle" aria-hidden="true"></i>
+          <div class="bottom-btn hand" @click='select(1)'>选择球员</div>
         </div>
       </div>
       <div class="line">
-        <div class="item">
+        <div v-show='teamList[0]' class="item">
           <div class='player-box'>
-            <player></player>
-            <div class="bottom-btn hand">替换守门员</div>
+            <player :data='teamPList[0]'></player>
           </div>
+          <div class="bottom-btn hand unselect" @click='unselect(0)'>替换球员</div>
+        </div>
+        <div v-show='!teamList[0]' class='item' :class='{selecting: waitSelectIndex==0}'>
+          <i class="fa fa-question-circle" aria-hidden="true"></i>
+          <div class="bottom-btn hand" @click='select(0)'>选择球员</div>
         </div>
       </div>
-      <el-button class='defense-confirm-btn'>确认球队阵容</el-button>
+      <el-button class='defense-confirm-btn' :disabled="!teamValid" @click='submitTeam'>确认球队阵容</el-button>
     </div>
 
     <el-dialog
@@ -63,9 +90,23 @@
       :lock-scroll='false'
       class='detail-dialog'
       width="80%">
-      <detail :value='detailPlayer'></detail>
+      <detail :data='detailPlayer'></detail>
       <span slot="footer" class="dialog-footer">
-        <p class='confirm-btn hand' @click="detailShow = false">确 定</p>
+        <p class='confirm-btn hand no-hover' @click="detailShow = false">确 定</p>
+      </span>
+    </el-dialog>
+
+
+    <el-dialog
+      :visible.sync="saleShow"
+      :show-close="false"
+      :lock-scroll='false'
+      title='出价'
+      width="40%">
+      <el-input v-model='price'></el-input>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="cancelSale">取 消</el-button>
+        <el-button @click="confirmSale">确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -83,16 +124,160 @@ export default {
   },
   data() {
     return {
-      playerList: [1, 2, 3, 4, 5, 6],
+      playerList: [],
+      teamList: [],
       firstShow: false,
       detailShow: false,
-      detailPlayer: [140, 170, 120],
+      detailPlayer: {},
+      editTeam: false,
+      waitSelectIndex: null,
+      loading: true,
+      saleCardId: null,
+      saleShow: false,
+      price: '',
+      teamMap: {},
     };
   },
-  computed: {},
+  computed: {
+    teamValid() {
+      return this.teamList.filter(e => !!e).length == 5;
+    },
+    teamPList() {
+      return this.teamList.map(cid => {
+        if (!cid) return {};
+        return this.getPlayerByCardId(cid);
+      });
+    }
+  },
   methods: {
-    showDetail() {
+    cancelSale() {
+      this.saleShow = false
+      this.price = ''
+    },
+    async confirmSale() {
+      const price = +this.price
+      if(isNaN(price)||!price) {
+        this.$message.warning('价格输入有误!')
+        return
+      }
+      const args = JSON.stringify([this.saleCardId, price])
+      const data = await this.$call(0, 'sale_my_card', args)
+      this.saleShow = false
+      window.location.reload()
+    },
+    sale(index) {
+      const cardId = this.playerList[index].cardId;
+      if(this.teamMap[cardId]) {
+        this.$message.warning('队伍中的球员无法卖出!')
+        return
+      }
+      this.saleCardId = cardId;
+      this.saleShow = true;
+    },
+    async submitTeam() {
+      const args = JSON.stringify(this.teamList);
+      const data = await this.$call(0, "change_user_team", args);
+      window.location.reload()
+    },
+    choose(index) {
+      const cardId = this.playerList[index].cardId;
+      this.unchooseTeam(cardId);
+      this.teamList[this.waitSelectIndex] = cardId;
+      this.teamList = [...this.teamList];
+      this.editTeam = false;
+      this.waitSelectIndex = null;
+    },
+    unchooseTeam(cardId) {
+      const list = [];
+      this.teamList.forEach(id => {
+        if (id == cardId) list.push(null);
+        else list.push(id);
+      });
+      this.teamList = list;
+    },
+    unselect(index) {
+      this.teamList[index] = null;
+      this.teamList = [...this.teamList];
+    },
+    select(index) {
+      this.editTeam = true;
+      this.waitSelectIndex = index;
+    },
+    showDetail(index) {
+      this.detailPlayer = this.playerList[index];
       this.detailShow = true;
+    },
+    async handlePList(list) {
+      const resList = [];
+      for (let i = 0; i < list.length; i++) {
+        const cardId = list[i];
+        let data = await this.$simulateCall(
+          0,
+          "get_card_id",
+          `[${JSON.stringify(cardId)}]`
+        );
+        data = JSON.parse(data).split(",");
+        let [
+          id,
+          player_name,
+          shoot,
+          defend,
+          speed,
+          shoot_factor,
+          defend_factor,
+          speed_factor,
+          position,
+          growth
+        ] = data;
+        const obj = {
+          id,
+          player_name,
+          shoot,
+          defend,
+          speed,
+          shoot_factor,
+          defend_factor,
+          speed_factor,
+          position,
+          growth
+        };
+        obj.avator = `${this.$preUrl}${id}.jpg`;
+        obj.cardId = cardId; // 卡片id
+        resList.push(obj);
+      }
+      this.playerList = resList;
+      this.setItem('playerList', this.playerList)
+    },
+    handleTeam(list) {
+      this.teamList = list;
+      // teamMap
+      const obj = {}
+      for (let i = 0; i < this.teamList.length; i++) {
+        const cid = this.teamList[i];
+        obj[cid] = true
+      }
+      this.teamMap = obj
+      this.setItem('teamList', this.teamList)
+    },
+    getPlayerByCardId(cardId) {
+      for (let i = 0; i < this.playerList.length; i++) {
+        let p = this.playerList[i];
+        if (p.cardId == cardId) return p;
+      }
+      return null;
+    }
+  },
+  async created() {
+    let list = await this.$simulateCall(0, "user_login", "");
+    list = JSON.parse(list);
+    if (list instanceof Object) {
+      await this.handlePList(list.card_list.split("_").filter(e => !!e));
+      this.handleTeam(list.team.split("_").filter(e => !!e));
+      this.setItem('userName', list.user_name)
+      this.setItem('power', list.power)
+      this.loading = false;
+    } else {
+      this.loading = false;
     }
   }
 };
@@ -125,6 +310,14 @@ export default {
         background-color: #3cac54;
         border-color: #3cac54;
         border-radius: 60px;
+      }
+      .select-btn {
+        width: 70%;
+        color: #fff;
+        background-color: rgb(236, 185, 30);
+        border-color: rgb(236, 185, 30);
+        border-radius: 60px;
+        margin: 0;
       }
       .btn-list {
         position: relative;
@@ -164,6 +357,11 @@ export default {
       border-radius: 10px;
       position: relative;
       overflow: hidden;
+      &.selecting {
+        i {
+          color: rgb(236, 185, 30);
+        }
+      }
       i {
         color: #fff;
         font-size: 200px;
@@ -172,14 +370,18 @@ export default {
       .bottom-btn {
         position: absolute;
         bottom: 0;
-        background-color: #3cac54;
+        background-color: rgb(236, 185, 30);
         width: 100%;
         height: 40px;
         line-height: 40px;
         text-align: center;
         color: #fff;
+        &.unselect {
+          background-color: #cc0033;
+        }
       }
       .player-box {
+        width: 200px;
         background-color: #fff;
       }
     }
@@ -191,6 +393,10 @@ export default {
       background-color: #3cac54;
       border-color: #3cac54;
       border-radius: 60px;
+      &[disabled] {
+        background-color: #aaa;
+        border-color: #aaa;
+      }
     }
   }
 }
@@ -207,6 +413,5 @@ export default {
     border: 1px solid #fff;
   }
 }
-
 </style>
 

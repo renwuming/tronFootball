@@ -40,7 +40,6 @@ export default {
       this.loading = false
     }, 500)
 
-    console.log(this.$NebPay)
   }
 };
 </script>

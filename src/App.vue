@@ -19,6 +19,9 @@
         <router-view></router-view>
       </el-main>
     </el-container>
+    <div class="free-btn hand no-hover" @click='getFree'>
+      <i class="fa fa-gift" aria-hidden="true"></i>
+    </div>
   </el-container>
 
 </template>
@@ -30,24 +33,13 @@ export default {
   data() {
     return {
       activeMenu: null,
-      fullScreen: false,
       user: Vue.userInfo
     };
   },
   methods: {
-    logout() {
-      logout().then(res => {
-        if (res.success) {
-          this.$router.push({ name: "login" });
-        } else {
-          this.$message.warning("退出失败!");
-        }
-      });
+    async getFree() {
+      let list = await this.$call(0, 'get_free_card', '')
     },
-    gotoCreate() {
-      const { href } = this.$router.resolve({ name: "activityEdit" });
-      window.open(href, "_blank");
-    }
   },
   watch: {
     $route() {
@@ -149,6 +141,29 @@ h1 {
   .logo {
     margin-right: 20px;
     height: 80px;
+  }
+}
+.free-btn {
+  position: fixed;
+  left: -10px;
+  top: 20px;
+  width: 120px;
+  height: 120px;
+  font-size: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #fff;
+  border-radius: 10px;
+  border: 2px solid #fe5882;
+  &:hover {
+    background-color: #fe5882;
+    i {
+      color: #fff;
+    }
+  }
+  i {
+    color: #fe5882;
   }
 }
 </style>

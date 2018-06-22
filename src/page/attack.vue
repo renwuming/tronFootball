@@ -44,7 +44,18 @@ export default {
       // this.attackModalShow = true;
       this.$router.push({name: 'attackDetail'})
     }
-  }
+  },
+  async created() {
+    let list = await this.$simulateCall(0, 'foreach_rank_card', '')
+    list = list.replace(/\"/g,'').split('_').map(e => e.split(':')[1])
+    for (let i = 0; i < list.length; i++) {
+      let id = list[i];
+      id = `["${id}"]`
+      // const data = await this.$simulateCall(0, 'get_user_player', id)
+      
+    }
+
+  },
 };
 </script>
 

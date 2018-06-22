@@ -1,28 +1,27 @@
 <template>
   <div class='wrapper' :class="{small: small}">
-    <h1>贝克汉姆</h1>
-    <span v-if="market">成长值：<var>66</var></span>
+    <h1>{{data.player_name}}</h1>
+    <span v-if="market">成长值：<var>{{data.growth}}</var></span>
     <div class="img-box">
-      <img src="http://www.renwuming.cn/static/car-game/portrait.jpg">
+      <img :src="data.avator">
     </div>
     <template v-if='!small'>
       <p class="line">
-        进攻：<var>200</var>
-      </p>
+        进攻：<var>{{+data.shoot + +data.shoot_factor * +data.growth}}</var>
+      </p >
       <p class="line">
-        防守：<var>200</var>
-      </p>
+        防守：<var>{{+data.defend + +data.defend_factor * +data.growth}}</var>
+      </p >
       <p class="line">
-        速度：<var>200</var>
-      </p>
+        速度：<var>{{+data.speed + +data.speed_factor * +data.growth}}</var>
+      </p >
     </template>
     <template v-else>
-      <p>进攻 / 防守 / 速度</p>
-      <p>200 / 200 / 200</p>
+      <p>进攻 / 防守 / 速度</p >
+      <p>200 / 200 / 200</p >
     </template>
   </div>
 </template>
-
 <script>
 export default {
   props: {
@@ -30,6 +29,11 @@ export default {
       default: true,
     },
     small: Boolean,
+    data: {
+      default: _ => {
+        return {}
+      },
+    },
   },
   components: {},
   data() {
@@ -50,6 +54,7 @@ export default {
   box-sizing: border-box;
   h1 {
     color: #282828;
+    font-size: 20px;
   }
   .img-box {
     width: 80%;

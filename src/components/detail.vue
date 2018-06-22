@@ -1,9 +1,9 @@
 <template>
   <div class='wrapper'>
-    <h1>贝克汉姆</h1>
+    <h1><span class='title'>{{data.player_name}}</span><span v-if='data.position==2' class='tag'>{{data.position | position}}</span></h1>
     <div class='main'>
       <div class="img-box">
-        <img src="http://www.renwuming.cn/static/car-game/portrait.jpg">
+        <img :src="data.avator">
       </div>
       <div class="radar-box">
         <div class='chart' ref='radar'></div>
@@ -12,7 +12,7 @@
     <p class='grow-value'>
       成长值：
       <br>
-      <var>66</var>
+      <var>{{data.growth}}</var>
     </p>
   </div>
 </template>
@@ -20,7 +20,11 @@
 <script>
 export default {
   props: {
-    value: Array,
+    data: {
+      default: _ => {
+        return {}
+      },
+    },
   },
   components: {},
   data() {
@@ -29,6 +33,18 @@ export default {
     };
   },
   computed: {
+    realShoot() {
+      let data = this.data
+      return +data.shoot + +data.shoot_factor * +data.growth
+    },
+    realDefend() {
+      let data = this.data
+      return +data.defend + +data.defend_factor * +data.growth
+    },
+    realSpeed() {
+      let data = this.data
+      return +data.speed + +data.speed_factor * +data.growth
+    },
     option() {
       const obj = {
         title: {
@@ -92,32 +108,24 @@ export default {
       }
       const colorMap = ["#FF0033","#FFCC33","#0099CC"]
       const nameMap = ['进攻','防守','速度']
-      const [attack, defense, speed] = this.value
-      obj.series[0].data[0].value = this.value
-      obj.radar.indicator = this.value.map((value,index) => {
+      const vlist = [this.realShoot,this.realDefend,this.realSpeed]
+      const max = this.getMax(vlist)
+      obj.series[0].data[0].value = vlist
+      obj.radar.indicator = vlist.map((value,index) => {
         return {
           name: `${nameMap[index]} ${value}`,
-          max: 200,
+          max,
           color: colorMap[index],
-          // label: {
-          //   fontSize: 120,
-          // },
-          // itemStyle: {
-          //   align: "center",
-          //   color: "#fff",
-          //   fontSize: 22,
-          //   textShadowColor: "rgba(0,0,0,.4)",
-          //   textShadowOffsetX: 4,
-          //   textShadowOffsetY: 4,
-          //   textShadowBlur: 2
-          // }
         }
       })
-      console.log(obj)
       return obj
     }
   },
   methods: {
+    getMax(list) {
+      const max = Math.max.apply(null, list)
+      return Math.ceil(max/100)*100
+    }
   },
   mounted() {
     // echarts实例
@@ -139,23 +147,35 @@ export default {
     font-size: 26px;
     width: 100%;
     text-align: left;
-    text-shadow: 4px 4px 2px rgba(0, 0, 0, 0.4);
+    .title {
+      text-shadow: 4px 4px 2px rgba(0, 0, 0, 0.4);
+    }
+    .tag {
+      background-color: rgb(255, 204, 51);
+      font-size: 18px;
+      margin-left: 14px;
+      padding: 4px;
+      border-radius: 6px;
+    }
   }
   .main {
     display: flex;
     width: 90%;
+    height: 240px;
     margin: 20px 0;
   }
   .img-box {
     width: 50%;
-    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     position: relative;
     img {
-      width: 300px;
+      width: 140px;
     }
   }
   .radar-box {
-    // border-left: 2px solid #fff;
+    border-left: 2px solid #fff;
     display: flex;
     justify-content: center;
     width: 50%;
