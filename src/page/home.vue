@@ -274,7 +274,7 @@ export default {
     list = JSON.parse(list);
     if (list instanceof Object) {
       await this.handlePList(list.card_list.split("_").filter(e => !!e));
-      this.handleTeam(list.team.split("_").filter(e => !!e));
+      if(list.team) this.handleTeam(list.team.split("_").filter(e => !!e));
       this.setItem('userName', list.user_name)
       this.setItem('power', list.power)
       this.loading = false;

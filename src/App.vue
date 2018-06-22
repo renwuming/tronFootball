@@ -20,6 +20,12 @@
       </el-main>
     </el-container>
     <div class="free-btn hand no-hover" @click='getFree'>
+      <i class="fa">free</i>
+    </div>
+    <div class="normal-btn free-btn hand no-hover" @click='getFree'>
+      <i class="fa fa-gift" aria-hidden="true"></i>
+    </div>
+    <div class="vip-btn free-btn hand no-hover" @click='getFree'>
       <i class="fa fa-gift" aria-hidden="true"></i>
     </div>
   </el-container>
@@ -38,8 +44,8 @@ export default {
   },
   methods: {
     async getFree() {
-      let list = await this.$call(0, 'get_free_card', '')
-    },
+      let list = await this.$call(0, "get_free_card", "");
+    }
   },
   watch: {
     $route() {
@@ -155,8 +161,23 @@ h1 {
   align-items: center;
   background-color: #fff;
   border-radius: 10px;
-  border: 2px solid #fe5882;
+  border: 2px solid #3cac54;
   z-index: 10000;
+  &:hover {
+    background-color: #3cac54;
+    i {
+      font-size: 40px;
+      color: #fff;
+    }
+  }
+  i {
+    font-size: 40px;
+    color: #3cac54;
+  }
+}
+.normal-btn {
+  top: 150px;
+  border: 2px solid #fe5882;
   &:hover {
     background-color: #fe5882;
     i {
@@ -166,6 +187,9 @@ h1 {
   i {
     color: #fe5882;
   }
+}
+.vip-btn {
+  top: 280px;
 }
 </style>
 
