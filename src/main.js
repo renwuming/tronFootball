@@ -8,6 +8,7 @@ import http from "./api"
 import filter from './filter'
 import myPublic from './assets/js/common.js'
 
+
 Vue.use(ElementUI)
 Vue.use(myPublic)
 Vue.use(filter)

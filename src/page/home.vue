@@ -218,7 +218,7 @@ export default {
         );
         data = JSON.parse(data).split(",");
         let [
-          id,
+          avatorId,
           player_name,
           shoot,
           defend,
@@ -230,7 +230,7 @@ export default {
           growth
         ] = data;
         const obj = {
-          id,
+          avatorId,
           player_name,
           shoot,
           defend,
@@ -241,7 +241,7 @@ export default {
           position,
           growth
         };
-        obj.avator = `${this.$preUrl}${id}.jpg`;
+        obj.avator = `${this.$preUrl}${avatorId}.jpg`;
         obj.cardId = cardId; // 卡片id
         resList.push(obj);
       }
