@@ -14,81 +14,115 @@
       <br>
       <var>66</var>
     </p>
-    
-    <!-- <p class="line">
-      进攻：<var>200</var>
-    </p>
-    <p class="line">
-      防守：<var>200</var>
-    </p>
-    <p class="line">
-      速度：<var>200</var>
-    </p> -->
   </div>
 </template>
 
 <script>
 export default {
-  props: {},
+  props: {
+    value: Array,
+  },
   components: {},
   data() {
-    return {};
-  },
-  computed: {},
-  methods: {},
-  mounted() {
-    const option = {
-      title: {
-        text: "球员综合能力",
-        textStyle: {
-          align: "center",
-          color: "#fff",
-          fontSize: 22,
-          textShadowColor: "rgba(0,0,0,.4)",
-          textShadowOffsetX: 4,
-          textShadowOffsetY: 4,
-          textShadowBlur: 2
-          // padding: [5,5]
-        }
-      },
-      legend: {
-        data: [{ name: "攻击" }]
-      },
-      radar: {
-        name: {
-          textStyle: {
-            color: "#fff",
-            fontSize: 16,
-            borderRadius: 3,
-            padding: [5, 5]
-          }
-        },
-        splitArea: {
-          areaStyle: {
-            color: ["#fff", "#B8D3E4", "#96C5E3", "#7DB5DA", "#72ACD1"]
-          }
-        },
-        indicator: [
-          { name: "攻击", max: 200, color: "#CC0033" },
-          { name: "防守", max: 200, color: "#FFCC33" },
-          { name: "速度", max: 200, color: "#009966" }
-        ]
-      },
-      series: [
-        {
-          type: "radar",
-          data: [
-            {
-              value: [120, 150, 180],
-              name: "贝克汉姆"
-            }
-          ]
-        }
-      ]
+    return {
+
     };
-    // 基于准备好的dom，初始化echarts实例
+  },
+  computed: {
+    option() {
+      const obj = {
+        title: {
+          text: "球员综合能力",
+          textStyle: {
+            align: "center",
+            color: "#fff",
+            fontSize: 22,
+            textShadowColor: "rgba(0,0,0,.4)",
+            textShadowOffsetX: 4,
+            textShadowOffsetY: 4,
+            textShadowBlur: 2
+          }
+        },
+        radar: {
+          radius: "90%",
+          center: ["50%", "66%"],
+          name: {
+            textStyle: {
+              color: "#fff",
+              fontSize: 16,
+              borderRadius: 3,
+              padding: [5, 5]
+            }
+          },
+          splitNumber: 4,
+          splitArea: {
+            areaStyle: {
+              color: ["transparent", "transparent", "transparent", "transparent"]
+            }
+          },
+          axisLine: {
+            lineStyle: {
+              color: "rgba(255, 255, 255, 1)"
+            }
+          },
+          splitLine: {
+            lineStyle: {
+              color: "rgba(255, 255, 255, 1)"
+            }
+          },
+          indicator: [
+          ]
+        },
+        series: [
+          {
+            type: "radar",
+            lineStyle: {
+              color: "#dc7448"
+            },
+            areaStyle: {
+              color: "#dc7448"
+            },
+            data: [
+              {
+                name: "综合能力"
+              },
+            ]
+          }
+        ]
+      }
+      const colorMap = ["#FF0033","#FFCC33","#0099CC"]
+      const nameMap = ['攻击','防守','速度']
+      const [attack, defense, speed] = this.value
+      obj.series[0].data[0].value = this.value
+      obj.radar.indicator = this.value.map((value,index) => {
+        return {
+          name: `${nameMap[index]} ${value}`,
+          max: 200,
+          color: colorMap[index],
+          // label: {
+          //   fontSize: 120,
+          // },
+          // itemStyle: {
+          //   align: "center",
+          //   color: "#fff",
+          //   fontSize: 22,
+          //   textShadowColor: "rgba(0,0,0,.4)",
+          //   textShadowOffsetX: 4,
+          //   textShadowOffsetY: 4,
+          //   textShadowBlur: 2
+          // }
+        }
+      })
+      console.log(obj)
+      return obj
+    }
+  },
+  methods: {
+  },
+  mounted() {
+    // echarts实例
     const radar = echarts.init(this.$refs.radar);
-    radar.setOption(option);
+    radar.setOption(this.option);
   }
 };
 </script>
@@ -102,6 +136,7 @@ export default {
   box-sizing: border-box;
   color: #fff;
   h1 {
+    font-size: 26px;
     width: 100%;
     text-align: left;
     text-shadow: 4px 4px 2px rgba(0, 0, 0, 0.4);
@@ -120,7 +155,7 @@ export default {
     }
   }
   .radar-box {
-    border-left: 2px solid #fff;
+    // border-left: 2px solid #fff;
     display: flex;
     justify-content: center;
     width: 50%;

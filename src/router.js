@@ -3,6 +3,7 @@ import VueRouter from 'vue-router';
 import market from './page/index'
 import home from './page/home'
 import attack from './page/attack'
+import attackDetail from './page/attackDetail'
 
 Vue.use(VueRouter);
 
@@ -22,6 +23,11 @@ const routes = [
     name: 'attack',
     component: attack,
   },
+  {
+    path: '/attackDetail',
+    name: 'attackDetail',
+    component: attackDetail,
+  },
 ];
 
 export const router = new VueRouter({
@@ -34,6 +40,7 @@ import {validateToken} from './api'
 
 router.beforeEach((to, from, next) => {
   Vue.currentRouter = to
+  Vue.loading = true
   // if(to.name == 'login') {
   //   next();
   //   return

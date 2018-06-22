@@ -42,7 +42,7 @@
           </div>
         </div>
       </div>
-      <el-button class='defense-confirm-btn'>确认防守阵容</el-button>
+      <el-button class='defense-confirm-btn'>确认球队阵容</el-button>
     </div>
 
     <el-dialog
@@ -62,7 +62,7 @@
       :show-close="false"
       class='detail-dialog'
       width="80%">
-      <detail></detail>
+      <detail :value='detailPlayer'></detail>
       <span slot="footer" class="dialog-footer">
         <p class='confirm-btn hand' @click="detailShow = false">确 定</p>
       </span>
@@ -84,7 +84,8 @@ export default {
     return {
       playerList: [1, 2, 3, 4, 5, 6],
       firstShow: false,
-      detailShow: false
+      detailShow: false,
+      detailPlayer: [140, 170, 120],
     };
   },
   computed: {},
@@ -100,6 +101,7 @@ export default {
 .content {
   width: 100%;
   display: flex;
+  align-items: flex-start;
   background-color: rgba(0, 0, 0, 0.5);
   padding: 20px;
   .player-list {
@@ -195,7 +197,7 @@ export default {
 <style lang='scss'>
 .detail-dialog {
   .el-dialog {
-    background-color: #999 !important;
+    background-color: #bbb !important;
     border-radius: 10px;
     border: 2px solid #fff;
   }

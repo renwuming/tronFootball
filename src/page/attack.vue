@@ -18,16 +18,6 @@
       :total="50">
     </el-pagination>
 
-
-    <el-dialog
-      :visible.sync="attackModalShow"
-      :show-close="false"
-      width="80%">
-      
-      <span slot="footer" class="dialog-footer">
-        <p class='confirm-btn hand' @click="attackModalShow = false">确 定</p>
-      </span>
-    </el-dialog>
   </div>
 </template>
 
@@ -51,7 +41,8 @@ export default {
   computed: {},
   methods: {
     attack() {
-      this.attackModalShow = true;
+      // this.attackModalShow = true;
+      this.$router.push({name: 'attackDetail'})
     }
   }
 };

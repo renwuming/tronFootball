@@ -1,5 +1,6 @@
 <template>
-  <div class="content">
+  <div class="content"
+    v-loading='loading'>
     <ul class='player-list'>
       <li v-for='item in playerList' :key='item'>
         <player></player>
@@ -18,6 +19,7 @@
 
 <script>
 // import {login} from '../api'
+import Vue from 'vue'
 import player from "../components/player";
 
 export default {
@@ -27,11 +29,17 @@ export default {
   },
   data() {
     return {
-      playerList: [1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 2, 3]
+      playerList: [1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 2],
+      loading: true,
     };
   },
   computed: {},
-  methods: {}
+  methods: {},
+  mounted() {
+    setTimeout(_ => {
+      this.loading = false
+    }, 500)
+  }
 };
 </script>
 

@@ -32,7 +32,7 @@ export default {
     return {
       activeMenu: null,
       fullScreen: false,
-      user: Vue.userInfo
+      user: Vue.userInfo,
     };
   },
   methods: {
@@ -55,15 +55,12 @@ export default {
       this.user = Vue.userInfo;
       const { name, meta } = Vue.currentRouter;
       this.activeMenu = name;
-      this.fullScreen = meta.fullScreen;
-    }
+    },
   },
   mounted() {
     this.user = Vue.userInfo;
     const { name, meta } = Vue.currentRouter;
     this.activeMenu = name;
-    this.fullScreen = meta.fullScreen;
-    console.log(this.activeMenu);
   }
 };
 </script>
