@@ -3,7 +3,7 @@
     v-loading="loading"
   >
     <ul class='defense-list'>
-      <li v-for='item in defenseList' :key='item'>
+      <li v-for='item in defenseList' :key='item.avatorId'>
         <p class='attack-btn hand no-hover' @click='attack(item)'>
           <i class="fa fa-futbol-o" aria-hidden="true"></i>
           <span>挑战</span>
@@ -66,7 +66,7 @@ export default {
         let callArgs_m = `["${team[j]}"]`;
         let member = await this.$simulateCall(0, "get_card_id", callArgs_m);
         let member_num = member.replace(/\"/g,"").split(",")
-        member_j["player_id"] = member_num[0];
+        member_j["avatorId"] = member_num[0];
         member_j["player_name"] = member_num[1];
         member_j["shoot"] = member_num[2];
         member_j["defend"] = member_num[3];
@@ -74,9 +74,9 @@ export default {
         member_j["shoot_factor"] = member_num[5];
         member_j["defend_factor"] = member_num[6];
         member_j["speed_factor"] = member_num[7];
-        member_j["player_role"] = member_num[8];
+        member_j["position"] = member_num[8];
         member_j["growth"] = member_num[9];
-        // single_team.push(member);
+        member_j["avator"] = `${this.$preUrl}${member_j["avatorId"]}.jpg`;
         single_team.push(member_j);
 
       }

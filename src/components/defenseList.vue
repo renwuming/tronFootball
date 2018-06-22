@@ -1,9 +1,9 @@
 <template>
   <div class="wrapper">
     <ul class='player-list'>
-      <li v-for='item2 in list' :key='item'>
+      <li v-for='(item2,index) in list'>
         <player :market='false' :small='false' :data='item2'></player>
-        <p class='pos-btn'>{{posMap[index]}}</p>
+        <p v-if='index == 0' class='pos-btn'>守门员</p>
       </li>
     </ul>
   </div>
@@ -15,7 +15,7 @@ import player from "../components/player";
 
 export default {
   props: {
-    list : Object
+    list : Array,
   },
   components: {
     player

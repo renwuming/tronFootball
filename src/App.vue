@@ -156,6 +156,7 @@ h1 {
   background-color: #fff;
   border-radius: 10px;
   border: 2px solid #fe5882;
+  z-index: 10000;
   &:hover {
     background-color: #fe5882;
     i {

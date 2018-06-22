@@ -3,7 +3,7 @@
     v-loading='loading'
   >
     <ul class='player-list'>
-      <li v-for='(item,index) in playerList' :key='item.id'>
+      <li v-for='(item,index) in playerList' :key='item.cardId'>
         <player :data='item'></player>
         <div class='btn-list'>
           <el-button v-show='!editTeam&&!teamMap[item.cardId]' class='buy-btn' @click='sale(index)'>卖出</el-button>
@@ -75,11 +75,13 @@
     <el-dialog
       :visible.sync="firstShow"
       :show-close="false"
-      width="80%">
-      <span>欢迎来到xxxx!</span>
-      <p>系统赠送您 5 名球员!</p>
+      width="40%">
+      <div class='dialog-text'>
+        <p>您还没有球员哦~</p>
+        <p>点击左侧按钮，可以免费抽取球员!</p>
+      </div>
       <span slot="footer" class="dialog-footer">
-        <p class='confirm-btn hand' @click="firstShow = false">确 定</p>
+        <p class='confirm-btn hand no-hover' @click="firstShow = false">确 定</p>
       </span>
     </el-dialog>
 
@@ -277,6 +279,7 @@ export default {
       this.setItem('power', list.power)
       this.loading = false;
     } else {
+      this.firstShow = true
       this.loading = false;
     }
   }
@@ -398,6 +401,11 @@ export default {
         border-color: #aaa;
       }
     }
+  }
+}
+.dialog-text {
+  p {
+    font-size: 20px;
   }
 }
 </style>
