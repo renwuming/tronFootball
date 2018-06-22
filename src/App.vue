@@ -1,9 +1,8 @@
 <template>
   <el-container>
     <el-header class='header-top'>
-      <div>
-        <h1>logo</h1>
-      </div>
+      <img class='logo' src="./assets/img/logo.png">
+      <h1>星云世界杯</h1>
       <div class='user-box'>
         <span v-if='user'>{{user.name}}</span>
       </div>
@@ -32,7 +31,7 @@ export default {
     return {
       activeMenu: null,
       fullScreen: false,
-      user: Vue.userInfo,
+      user: Vue.userInfo
     };
   },
   methods: {
@@ -55,7 +54,7 @@ export default {
       this.user = Vue.userInfo;
       const { name, meta } = Vue.currentRouter;
       this.activeMenu = name;
-    },
+    }
   },
   mounted() {
     this.user = Vue.userInfo;
@@ -112,9 +111,6 @@ h1 {
 }
 </style>
 <style lang='scss' scoped>
-.header-top {
-  margin-top: 30px;
-}
 .el-menu {
   display: flex;
   height: 40px;
@@ -139,6 +135,20 @@ h1 {
     background-color: rgba(255, 255, 204, 0.5);
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
+  }
+}
+.header-top {
+  height: 80px !important;
+  margin: 16px 0;
+  display: flex;
+  align-items: center;
+  h1 {
+    color: #fe5882;
+    text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.6);
+  }
+  .logo {
+    margin-right: 20px;
+    height: 80px;
   }
 }
 </style>

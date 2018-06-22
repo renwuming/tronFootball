@@ -39,6 +39,8 @@ export default {
     setTimeout(_ => {
       this.loading = false
     }, 500)
+
+    console.log(this.$NebPay)
   }
 };
 </script>

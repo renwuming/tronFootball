@@ -12,6 +12,9 @@ Vue.use(ElementUI)
 Vue.use(myPublic)
 Vue.use(filter)
 
+const NebPay = _require('nebpay')
+Vue.prototype.$NebPay = new NebPay()
+
 new Vue({
   el: '#app',
   router,

@@ -98,7 +98,10 @@ export default {
     },
   },
   mounted() {
-    this.handleLiveStr()
+    const myList = ['任无名', '赵无极', '韩如梦', '落霞雨', '任正天']
+    const enemyList = ['敌方1','敌方2','敌方3','敌方4','敌方守门员',]
+    const resultList = [2, 1]
+    this.handleLiveStr(myList.concat(enemyList), ...resultList)
   }
 };
 </script>
