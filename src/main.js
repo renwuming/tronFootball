@@ -17,7 +17,9 @@ Vue.prototype.$preUrl = 'https://sec-cdn.static.xiaomi.net/secStatic/groups/miui
 
 const NebPay = _require('nebpay')
 Vue.prototype.$NebPay = new NebPay()
+
 const addr = 'n1nxECbBxHYMcBocPMv8SvVEUmPo1fKBrKH';
+
 Vue.prototype.$addr = addr
 
 Vue.prototype.$simulateCall = function(value, callFunction, callArgs) {
@@ -39,6 +41,8 @@ Vue.prototype.$call = function(value, callFunction, callArgs) {
     });
   })
 }
+
+
 
 new Vue({
   el: '#app',

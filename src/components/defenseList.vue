@@ -22,8 +22,6 @@ export default {
   },
   data() {
     return {
-      playerList: [1, 2, 3, 2, 3],
-      posMap: ['前锋','前锋','后卫','后卫','守门员']
     };
   },
   computed: {},

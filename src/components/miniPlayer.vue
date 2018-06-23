@@ -1,9 +1,10 @@
 <template>
   <div class='wrapper'>
-    <h1>{{data.player_name}}</h1>
+    <h1 v-if='data.player_name.length <= 7'>{{data.player_name}}</h1>
+    <h1 v-else style='font-size:14px'>{{data.player_name}}</h1>
     <div class="detail">
       <div class="img-box">
-        <img src="http://www.renwuming.cn/static/car-game/portrait.jpg">
+        <img :src="data.avator">
       </div>
       <div class='value-box'>
         <p>进攻 {{+data.shoot + +data.shoot_factor * +data.growth}}</p>
