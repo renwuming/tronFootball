@@ -77,11 +77,12 @@ export default {
         member_j["position"] = member_num[8];
         member_j["growth"] = member_num[9];
         member_j["avator"] = `${this.$preUrl}${member_j["avatorId"]}.jpg`;
+        member_j["address"] = ele[1];
         single_team.push(member_j);
-
       }
       // toplist_d.push(ele[1]);
       totallist.push(single_team);
+
     }
 
     this.defenseList = totallist;

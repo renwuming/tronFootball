@@ -34,31 +34,31 @@
         <i class="mid-icon fa fa-futbol-o" aria-hidden="true"></i>
         <div class="item me">
           <div class='player-box'>
-            <player ></player>
+            <player :data="attackList[0]"></player>
           </div>
         </div>
       </div>
       <div class="line right">
         <div class="item me">
           <div class='player-box'>
-            <player></player>
+            <player :data="attackList[1]"></player>
           </div>
         </div>
         <div class="item me">
           <div class='player-box'>
-            <player></player>
+            <player :data="attackList[2]"></player>
           </div>
         </div>
       </div>
       <div class="line right">
         <div class="item me">
           <div class='player-box'>
-            <player></player>
+            <player :data="attackList[3]"></player>
           </div>
         </div>
         <div class="item me">
           <div class='player-box'>
-            <player></player>
+            <player :data="attackList[4]"></player>
           </div>
         </div>
       </div>
@@ -88,7 +88,7 @@ export default {
   data() {
     return {
       defenseList: this.$route.query.team,
-      attackList:[],
+      attackList: this.getItem('playerList'),
       liveStr: '',
     };
   },
@@ -98,8 +98,33 @@ export default {
   async mounted() {
     const myList = ["任无名", "赵无极", "韩如梦", "落霞雨", "任正天"];
     const enemyList = ["敌方1", "敌方2", "敌方3", "敌方4", "敌方守门员"];
-    const resultList = [2, 1];
-    handleStr.apply(this, [myList.concat(enemyList), ...resultList]);
+    // const resultList = [2, 1];
+    let callArgs = `["${this.defenseList[0].address}"]`;
+    let result = null;
+    await this.$call(0,"team_vs",callArgs);
+
+    const self = this;
+    let winner_growth;
+    function getResult() {
+      setTimeout(async () => {
+        result = await self.$simulateCall(0,"get_match_info","");
+        if(!result) {
+          getResult();
+        } else {
+          console.log(result);
+          let resultback = result.split("_");
+          let resultList = []
+          resultList.push(resultback[10]);
+          resultList.push(resultback[11]);
+          winner_growth = resultback[12];
+          handleStr.apply(this, [myList.concat(enemyList), ...resultList]);
+        }
+      },500);
+    }
+
+    getResult();
+
+
 
   }
 };
