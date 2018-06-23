@@ -108,7 +108,8 @@ export default {
     function getResult() {
       setTimeout(async () => {
         result = await self.$simulateCall(0,"get_match_info","");
-        if(!result) {
+        if(result == 'null'||!result) {
+          console.log(result);
           getResult();
         } else {
           console.log(result);

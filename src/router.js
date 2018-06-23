@@ -41,9 +41,7 @@ router.beforeEach(async (to, from, next) => {
   if(isNaN(+Vue.power)) Vue.power = '??'
   const userName = Vue.prototype.getItem('userName')
   if(!userName&&to.name!='home') {
-    setTimeout(_ => {
-      router.push({name: 'home'})
-    }, 500)
+    router.push({name: 'home'})
   } else {
     next();
   }

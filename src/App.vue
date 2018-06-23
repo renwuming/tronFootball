@@ -73,11 +73,11 @@ export default {
         "get_common_card_price",
         ""
       );
-      this.setItem("commonPrice", commonPrice.result);
+      this.setItem("commonPrice", commonPrice);
       let vipPrice = await this.$simulateCall(0, "get_vip_card_price", "");
-      this.setItem("vipPrice", vipPrice.result);
+      this.setItem("vipPrice", vipPrice);
       let powerPrice = await this.$simulateCall(0, "get_power_price", "");
-      this.setItem("powerPrice", powerPrice.result);
+      this.setItem("powerPrice", powerPrice);
     },
     async getFree() {
       let data = await this.$call(0, "get_free_card", "");
@@ -106,6 +106,7 @@ export default {
       const { name, meta } = Vue.currentRouter;
       this.activeMenu = name;
       this.power = Vue.power;
+      this.init();
     }
   },
   mounted() {
@@ -113,8 +114,6 @@ export default {
     this.power = Vue.power;
     const { name, meta } = Vue.currentRouter;
     this.activeMenu = name;
-
-    this.init();
   }
 };
 </script>
