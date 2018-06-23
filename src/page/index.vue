@@ -35,7 +35,7 @@ export default {
       loading: true,
       pageNum: 1,
       pageTotal: 0,
-      pageSize: 5,
+      pageSize: 10,
       topList: [],
     };
   },
