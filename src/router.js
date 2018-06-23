@@ -35,24 +35,17 @@ export const router = new VueRouter({
 });
 
 
-// 全局钩子校验token
-import {validateToken} from './api'
-
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
   Vue.currentRouter = to
-  Vue.loading = true
-  // if(to.name == 'login') {
-  //   next();
-  //   return
-  // }
-  // validateToken().then(res => {
-  //   if(res.user) {
-  //     Vue.userInfo = res.user
-      next();
-  //   } else {
-  //     router.push({name: 'login', query: {target: to.path}})
-  //   }
-  // })
+  const userName = Vue.prototype.getItem('userName')
+  if(!userName&&to.name!='home') {
+    router.push({name: 'home'})
+  } else {
+    next();
+  }
+  Vue.power = await Vue.prototype.$simulateCall(0, 'get_user_power', '')
+  if(isNaN(+Vue.power)) Vue.power = '-'
 });
+
 
 export default router;

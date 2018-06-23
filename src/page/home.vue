@@ -62,11 +62,11 @@
           <div class='player-box'>
             <player :data='teamPList[0]'></player>
           </div>
-          <div class="bottom-btn hand unselect" @click='unselect(0)'>替换球员</div>
+          <div class="bottom-btn hand unselect" @click='unselect(0)'>替换守门员</div>
         </div>
         <div v-show='!teamList[0]' class='item' :class='{selecting: waitSelectIndex==0}'>
           <i class="fa fa-question-circle" aria-hidden="true"></i>
-          <div class="bottom-btn hand" @click='select(0)'>选择球员</div>
+          <div class="bottom-btn hand" @click='select(0)'>选择守门员</div>
         </div>
       </div>
       <el-button class='defense-confirm-btn' :disabled="!teamValid" @click='submitTeam'>确认球队阵容</el-button>
@@ -78,7 +78,7 @@
       width="40%">
       <div class='dialog-text'>
         <p>您还没有球员哦~</p>
-        <p>点击左侧按钮，可以免费抽取球员!</p>
+        <p>点击左侧free按钮，可以免费抽取球员!</p>
       </div>
       <span slot="footer" class="dialog-footer">
         <p class='confirm-btn hand no-hover' @click="firstShow = false">确 定</p>
@@ -165,7 +165,6 @@ export default {
       const args = JSON.stringify([this.saleCardId, price])
       const data = await this.$call(0, 'sale_my_card', args)
       this.saleShow = false
-      window.location.reload()
     },
     sale(index) {
       const cardId = this.playerList[index].cardId;
@@ -179,7 +178,6 @@ export default {
     async submitTeam() {
       const args = JSON.stringify(this.teamList);
       const data = await this.$call(0, "change_user_team", args);
-      window.location.reload()
     },
     choose(index) {
       const cardId = this.playerList[index].cardId;
@@ -276,12 +274,12 @@ export default {
       await this.handlePList(list.card_list.split("_").filter(e => !!e));
       if(list.team) this.handleTeam(list.team.split("_").filter(e => !!e));
       this.setItem('userName', list.user_name)
-      this.setItem('power', list.power)
       this.loading = false;
     } else {
       this.firstShow = true
       this.loading = false;
     }
+
   }
 };
 </script>
