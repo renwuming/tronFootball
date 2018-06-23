@@ -101,16 +101,19 @@ export default {
     await this.$call(0,"team_vs",callArgs);
 
     const self = this;
-    let winner_growth;
+    // let winner_growth;
     function getResult() {
       setTimeout(async () => {
         result = await self.$simulateCall(0, "get_match_info", "");
         if (result == "null" || !result) {
+          console.log(result,'>>>>>>>>>>>>>>')
           getResult();
         } else {
           let resultback = result.split("_");
+          console.log(resultback+"…………………………………………………………………………………………………………………………");
           let [addr1, addr2, myScore, enemyScore, grow] = resultback;
           grow = parseFloat(grow);
+          console.log(grow);
           self.resultList = [myScore, enemyScore];
           if(+grow > 0) {
             self.winFlag = true
