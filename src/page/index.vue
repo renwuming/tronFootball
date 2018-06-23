@@ -46,7 +46,6 @@ export default {
       let value_buy = price;
       let callFunction_buy = "get_sale_card";
       let callArgs_buy = `["${id}"]`;
-      console.log(callArgs_buy);
       await this.$call(value_buy, callFunction_buy, callArgs_buy);
       this.$message({
         showClose: true,

@@ -69,7 +69,7 @@
           <div class="bottom-btn hand" @click='select(0)'>选择守门员</div>
         </div>
       </div>
-      <el-button class='defense-confirm-btn' :disabled="!teamValid" @click='submitTeam'>确认球队阵容</el-button>
+      <el-button class='defense-confirm-btn' :disabled="!teamValid" @click='submitTeam'>提交队伍</el-button>
     </div>
 
     <el-dialog

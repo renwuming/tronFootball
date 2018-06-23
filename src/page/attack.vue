@@ -4,7 +4,7 @@
   >
     <ul class='defense-list'>
       <li v-for='item in defenseList' :key='item.avatorId' :class='{me: address==item.address}'>
-        <p v-if='address&&address!=item.address' class='attack-btn hand no-hover' @click='attack(item)'>
+        <p v-if='teamList.length&&address!=item.address' class='attack-btn hand no-hover' @click='attack(item)'>
           <span>No.{{item.No}}</span>
           <i class="fa fa-futbol-o" aria-hidden="true"></i>
           <span>挑战</span>
@@ -12,8 +12,10 @@
         <p v-else class='attack-btn'>
           <span>No.{{item.No}}</span>
           <i class="fa fa-futbol-o" aria-hidden="true"></i>
+          <span v-if='address==item.address'>我的队伍</span>
         </p>
         <div class="defense-players">
+          <p class='address-box'>{{item.address}}</p>
           <defense-list :list="item"></defense-list>
         </div>
       </li>
@@ -50,6 +52,7 @@ export default {
       pageSize: 3,
       toplist: [],
       address: '',
+      teamList: [],
     };
   },
   computed: {},
@@ -98,6 +101,15 @@ export default {
     }
   },
   async mounted() {
+    this.teamList = this.getItem('teamList')
+    if(!this.teamList||this.teamList&&this.teamList.length<1) {
+      this.$message({
+        showClose: true,
+        duration: 0,
+        type: 'warning',
+        message: '您还没有组建球队！'
+      });
+    }
     this.address = Vue.address
     let list = await this.$simulateCall(0, "foreach_rank_card", "");
     if(list.length>10) {
@@ -138,6 +150,14 @@ export default {
       }
       .defense-players {
         width: 80%;
+        .address-box {
+          width: 100%;
+          text-align: center;
+          background-color: #ecb91e;
+          color: #fff;
+          margin-bottom: 10px;
+          border-radius: 20px;
+        }
       }
       .attack-btn {
         width: 150px;
