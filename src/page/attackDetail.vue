@@ -110,7 +110,7 @@ export default {
         } else {
           let resultback = result.split("_");
           let [addr1, addr2, myScore, enemyScore, grow] = resultback;
-          grow = grow.replace("\\","");
+          grow = parseFloat(grow);
           self.resultList = [myScore, enemyScore];
           if(+grow > 0) {
             self.winFlag = true
