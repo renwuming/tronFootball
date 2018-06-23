@@ -37,6 +37,8 @@ export const router = new VueRouter({
 
 router.beforeEach(async (to, from, next) => {
   Vue.currentRouter = to
+  let address = await Vue.prototype.$simulateCall(0, 'get_address', '')
+  Vue.address = JSON.parse(address)
   Vue.power = await Vue.prototype.$simulateCall(0, 'get_user_power', '')
   if(isNaN(+Vue.power)) Vue.power = '??'
   const userName = Vue.prototype.getItem('userName')

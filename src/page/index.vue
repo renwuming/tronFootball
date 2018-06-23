@@ -12,7 +12,9 @@
       class='page-list'
       background
       layout="prev, pager, next"
-      :total="50">
+      :page-size='pageSize'
+      :current-page.sync='pageNum'
+      :total="pageTotal">
     </el-pagination>
   </div>
 </template>
@@ -30,7 +32,11 @@ export default {
   data() {
     return {
       playerList: [],
-      loading: true
+      loading: true,
+      pageNum: 1,
+      pageTotal: 0,
+      pageSize: 5,
+      topList: [],
     };
   },
   computed: {},
@@ -42,20 +48,14 @@ export default {
       let callArgs_buy = `["${id}"]`;
       console.log(callArgs_buy);
       await this.$call(value_buy, callFunction_buy, callArgs_buy);
-    }
-  },
-  async mounted() {
-    //show player list and detail
-    let value = 0;
-    let callFunction = "foreach_sale_card";
-    let callArgs = "";
-    let list = await this.$simulateCall(value, callFunction, callArgs);
-    let player_list = [];
-
-    if (list.length > 2) {
-      let parts = list.split("_");
-
-      for (let j = 0; j < parts.length; j++) {
+    },
+    async init() {
+      this.loading = true;
+      let start = this.pageSize * (this.pageNum - 1),
+        end = start + this.pageSize;
+      if (end > this.pageTotal) end = this.pageTotal;
+      let player_list = [];
+      for (let j = start; j < end; j++) {
         let players = {
           player_id: 0,
           player_name: null,
@@ -69,7 +69,7 @@ export default {
           growth: 0,
           price: 0
         };
-        let detail = parts[j].split("~");
+        let detail = this.topList[j].split("~");
         let num = detail[1].split(",");
         players.player_id = detail[0].replace('"', "");
         let [
@@ -100,9 +100,24 @@ export default {
         player_list.push(players);
       }
       this.playerList = player_list;
+      this.loading = false;
+    },
+  },
+  async created() {
+    let value = 0;
+    let callFunction = "foreach_sale_card";
+    let callArgs = "";
+    let list = await this.$simulateCall(value, callFunction, callArgs);
+    if (list.length > 10) {
+      this.topList = list.split("_");
+      this.pageTotal = this.topList.length
     }
-
-    this.loading = false;
+    this.init()
+  },
+  watch: {
+    pageNum() {
+      this.init();
+    }
   }
 };
 </script>

@@ -107,6 +107,7 @@ export default {
       this.activeMenu = name;
       this.power = Vue.power;
       this.init();
+      this.userName = this.getItem("userName");
     }
   },
   mounted() {
