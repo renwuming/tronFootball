@@ -2,9 +2,9 @@
   <el-container>
     <el-header class='header-top'>
       <img class='logo' src="./assets/img/logo.png">
-      <h1>星云世界杯</h1>
+      <h1 style='font-style: italic;border-bottom: 2px solid;border-top: 2px solid;'>Footbal On Chain</h1>
       <div class='user-box'>
-        <span v-if='userName'>{{userName}} | 体力 {{power}}</span>
+        <span v-if='userName'>{{userName}} · <span style='font-size:16px;'>体力 <span style='display:inline-block;width:20px;'>{{power}}</span></span></span>
       </div>
     </el-header>
     <el-container class='wrapper'>
@@ -221,6 +221,7 @@ h1 {
   position: relative;
   height: 80px !important;
   margin: 16px 0;
+  margin-bottom: 20px;
   display: flex;
   align-items: center;
   h1 {
@@ -234,10 +235,11 @@ h1 {
   .user-box {
     position: absolute;
     right: 80px;
-    top: 24px;
+    top: 20px;
     color: #fff;
     font-size: 20px;
-    background-color: #3cac54;
+    background: url(./assets/img/yellow.png) center center/contain no-repeat;
+    border-radius: 6px;
     padding: 4px 20px;
   }
 }
