@@ -2,7 +2,7 @@
   <div class="content"
     v-loading='loading'>
     <ul class='player-list'>
-      <li v-for='item in playerList' :key='item.player_id'>
+      <li v-for='item in playerList'>
         <player :data="item"></player>
         <p class='price'>{{item.price}} NAS</p>
         <el-button class='buy-btn' v-on:click="buy(item.player_id,item.price)">购买</el-button>

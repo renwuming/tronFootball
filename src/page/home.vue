@@ -78,7 +78,8 @@
       width="40%">
       <div class='dialog-text'>
         <p>您还没有球员哦~</p>
-        <p>点击左侧free按钮，可以免费抽取球员!</p>
+        <p>点击左侧free按钮，免费抽取球员</p>
+        <p>然后才能开始游戏哦~</p>
       </div>
       <span slot="footer" class="dialog-footer">
         <p class='confirm-btn hand no-hover' @click="firstShow = false">确 定</p>
@@ -268,6 +269,7 @@ export default {
     }
   },
   async created() {
+    this.setItem('userName', '???')
     let list = await this.$simulateCall(0, "user_login", "");
     list = JSON.parse(list);
     if (list instanceof Object) {
