@@ -10,6 +10,9 @@ filter.install = function(Vue) {
   Vue.filter('position', function (value) {
     return posMap[value]
   });
+  Vue.filter('value', function (value) {
+    return parseFloat(value).toFixed(2)
+  });
 };
 
 export { filter as default };

@@ -7,9 +7,9 @@
         <img :src="data.avator">
       </div>
       <div class='value-box'>
-        <p>进攻 {{+data.shoot + +data.shoot_factor * +data.growth}}</p>
-        <p>防守 {{+data.defend + +data.defend_factor * +data.growth}}</p>
-        <p>速度 {{+data.speed + +data.speed_factor * +data.growth}}</p>
+        <p>进攻 {{+data.shoot + +data.shoot_factor * +data.growth | value}}</p>
+        <p>防守 {{+data.defend + +data.defend_factor * +data.growth | value}}</p>
+        <p>速度 {{+data.speed + +data.speed_factor * +data.growth | value}}</p>
       </div>
     </div>
   </div>

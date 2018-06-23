@@ -8,13 +8,13 @@
     </div>
     <template v-if='!small'>
       <p class="line">
-        进攻：<var>{{+data.shoot + +data.shoot_factor * +data.growth}}</var>
+        进攻：<var>{{+data.shoot + +data.shoot_factor * +data.growth | value}}</var>
       </p >
       <p class="line">
-        防守：<var>{{+data.defend + +data.defend_factor * +data.growth}}</var>
+        防守：<var>{{+data.defend + +data.defend_factor * +data.growth | value}}</var>
       </p >
       <p class="line">
-        速度：<var>{{+data.speed + +data.speed_factor * +data.growth}}</var>
+        速度：<var>{{+data.speed + +data.speed_factor * +data.growth | value}}</var>
       </p >
     </template>
     <template v-else>

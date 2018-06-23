@@ -112,8 +112,9 @@ export default {
       const max = this.getMax(vlist)
       obj.series[0].data[0].value = vlist
       obj.radar.indicator = vlist.map((value,index) => {
+        value = parseFloat(value).toFixed(2)
         return {
-          name: `${nameMap[index]} ${value}`,
+          name: `${nameMap[index]}${value}`,
           max,
           color: colorMap[index],
         }

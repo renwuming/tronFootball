@@ -24,7 +24,6 @@
 </template>
 
 <script>
-// import {login} from '../api'
 import player from "../components/player";
 import defenseList from "../components/defenseList";
 
@@ -44,7 +43,6 @@ export default {
   computed: {},
   methods: {
     attack(en_team) {
-      // this.attackModalShow = true;
 
       this.$router.push({name: 'attackDetail', query: {team: en_team}})
     }
@@ -60,7 +58,9 @@ export default {
       let callArgs_d = `["${ele[1]}"]`;
       // console.log(callArgs_d);
       let detail = await this.$simulateCall(0, "get_user_player", callArgs_d);
-      let team = JSON.parse(detail)["team"].split("_").slice(1,6);
+      detail = JSON.parse(detail)
+      let serialNumber = JSON.parse(detail.serialNumber)
+      let team = detail.team.split("_").slice(1,6);
       for (let j=0;j<5;j++){
         let member_j = {};
         let callArgs_m = `["${team[j]}"]`;
@@ -86,7 +86,6 @@ export default {
     }
 
     this.defenseList = totallist;
-    // console.log("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"+totallist[0][1].speed)
 
     this.loading = false
 

@@ -47,7 +47,7 @@
       </el-tooltip>
     </div>
     <div class="power-btn free-power-btn hand no-hover" @click='getPower'>
-      <el-tooltip class="item" effect="dark" content="少量花费，增加5点体力" placement="left">
+      <el-tooltip class="item" effect="dark" content="较少花费，增加5点体力" placement="left">
         <i class="fa fa-medkit" aria-hidden="true"></i>
       </el-tooltip>
     </div>

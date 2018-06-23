@@ -64,16 +64,14 @@
       </div>
     </div>
     <div class="live-box">
-      <div class="text-live">{{liveStr}}</div>
-      <el-button class='skip-btn'>跳过</el-button>
+      <div v-show='resultList.length<1' class="text-live">{{liveStr}}<i class="fa fa-spinner fa-pulse fa-3x fa-fw" style='margin-top:30px;font-size:36px;'></i></div>
+      <div v-show='resultList.length>1' class="text-live">
+        <p style='font-size:80px;width:100%;display:flex;justify-content:center;'><span style='width:160px;text-align:center;'>{{resultList[0]}}</span><span style='display:inline-block;width:40px;text-align:center;'>:</span><span style='width:160px;text-align:center;'>{{resultList[1]}}</span></p>
+        <p style='font-size:20px;width:100%;display:flex;justify-content:center;'><span style='width:160px;text-align:center;'>我方</span><span style='display:inline-block;width:40px;text-align:center;'></span><span style='width:160px;text-align:center;'>敌方</span></p>
+        <p v-show='winFlag' class='win-box'>获胜!</p>
+        <p v-show='!winFlag' class='lose-box'>失败</p>
+      </div>
     </div>
-    <!-- <ul class='defense-list'>
-      <li v-for='item in defenseList' :key='item'>
-        <div class="defense-players">
-          <defense-list></defense-list>
-        </div>
-      </li>
-    </ul> -->
   </div>
 </template>
 
@@ -88,17 +86,16 @@ export default {
   data() {
     return {
       defenseList: this.$route.query.team,
-      attackList: this.getItem('playerList'),
-      liveStr: '',
+      // defenseList: this.getItem("playerList"),
+      attackList: this.getItem("playerList"),
+      liveStr: "激烈角逐中",
+      resultList: [],
+      winFlag: false,
     };
   },
   computed: {},
-  methods: {
-  },
-  async mounted() {
-    const myList = ["任无名", "赵无极", "韩如梦", "落霞雨", "任正天"];
-    const enemyList = ["敌方1", "敌方2", "敌方3", "敌方4", "敌方守门员"];
-    // const resultList = [2, 1];
+  methods: {},
+  async created() {
     let callArgs = `["${this.defenseList[0].address}"]`;
     let result = null;
     await this.$call(0,"team_vs",callArgs);
@@ -107,38 +104,42 @@ export default {
     let winner_growth;
     function getResult() {
       setTimeout(async () => {
-        result = await self.$simulateCall(0,"get_match_info","");
-        if(result == 'null'||!result) {
-          console.log(result);
+        result = await self.$simulateCall(0, "get_match_info", "");
+        if (result == "null" || !result) {
           getResult();
         } else {
-          console.log(result);
           let resultback = result.split("_");
-          let resultList = []
-          resultList.push(resultback[10]);
-          resultList.push(resultback[11]);
-          winner_growth = resultback[12];
-          handleStr.apply(this, [myList.concat(enemyList), ...resultList]);
+          const [addr1, addr2, myScore, enemyScore, grow] = resultback;
+          self.resultList = [myScore, enemyScore];
+          if(+grow > 0) {
+            self.winFlag = true
+            self.$message.success('挑战成功!球员属性获得了提升!')
+          } else {
+            self.$message.error('挑战失败!')
+          }
         }
-      },500);
+      }, 500);
     }
 
     getResult();
 
-
-
+    // const myList = ["任无名", "赵无极", "韩如梦", "落霞雨", "任正天"];
+    // const enemyList = ["敌方1", "敌方2", "敌方3", "敌方4", "敌方守门员"];
+    // const resultList = [2, 1];
+    // handleStr.apply(this, [myList.concat(enemyList), ...resultList]);
   }
 };
 </script>
 
 <style lang='scss' scoped>
 .content {
+  position: relative;
   display: flex;
   align-items: flex-start;
   background-color: rgba(0, 0, 0, 0.7);
   padding: 20px;
   .battle-box {
-    width: 60%;
+    width: 100%;
     display: flex;
     flex-direction: column;
     padding: 20px;
@@ -173,17 +174,38 @@ export default {
     }
   }
   .live-box {
-    width: 40%;
+    width: 50%;
+    height: 300px;
     display: flex;
+    position: absolute;
+    left: 40px;
+    bottom: 40px;
     flex-direction: column;
     align-items: center;
     padding: 20px;
     .text-live {
       width: 100%;
+      font-size: 22px;
       height: 700px;
       padding: 10px;
-      background-color: rgba(255, 255, 255, 0.5);
+      background-color: rgba(255, 255, 255, 0.8);
       white-space: pre-wrap;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+    .win-box {
+      color: #e91720;
+      line-height: 40px;
+      margin-top: 20px;
+      font-size: 30px;
+    }
+    .lose-box {
+      color: #3cac54;
+      line-height: 40px;
+      margin-top: 20px;
+      font-size: 30px;
     }
     .skip-btn {
       width: 80%;
