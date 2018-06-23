@@ -166,6 +166,11 @@ export default {
       const args = JSON.stringify([this.saleCardId, price])
       const data = await this.$call(0, 'sale_my_card', args)
       this.saleShow = false
+      this.$message({
+        showClose: true,
+        duration: 0,
+        message: '请在区块链交易成功后，刷新页面！'
+      });
     },
     sale(index) {
       const cardId = this.playerList[index].cardId;
@@ -179,6 +184,11 @@ export default {
     async submitTeam() {
       const args = JSON.stringify(this.teamList);
       const data = await this.$call(0, "change_user_team", args);
+      this.$message({
+        showClose: true,
+        duration: 0,
+        message: '请在区块链交易成功后，刷新页面！'
+      });
     },
     choose(index) {
       const cardId = this.playerList[index].cardId;

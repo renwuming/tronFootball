@@ -109,7 +109,9 @@ export default {
           getResult();
         } else {
           let resultback = result.split("_");
-          const [addr1, addr2, myScore, enemyScore, grow] = resultback;
+          let [addr1, addr2, myScore, enemyScore, grow] = resultback;
+          grow = grow.replace("\\","");
+          console.log(+grow)
           self.resultList = [myScore, enemyScore];
           if(+grow > 0) {
             self.winFlag = true

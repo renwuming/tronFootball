@@ -48,6 +48,11 @@ export default {
       let callArgs_buy = `["${id}"]`;
       console.log(callArgs_buy);
       await this.$call(value_buy, callFunction_buy, callArgs_buy);
+      this.$message({
+        showClose: true,
+        duration: 0,
+        message: '请在区块链交易成功后，刷新页面！'
+      });
     },
     async init() {
       this.loading = true;
