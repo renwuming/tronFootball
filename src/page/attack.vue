@@ -7,7 +7,7 @@
         <p v-if='power>0&&teamList&&teamList.length&&address!=item.address' class='attack-btn hand no-hover' @click='attack(item)'>
           <span>No.{{item.No}}</span>
           <i class="fa fa-futbol-o" aria-hidden="true"></i>
-          <span>挑战</span>
+          <span v-show='item.length>0'>挑战</span>
         </p>
         <p v-else class='attack-btn'>
           <span>No.{{item.No}}</span>
@@ -58,10 +58,22 @@ export default {
   },
   computed: {},
   methods: {
-    async attack(en_team) {
+    async updatePower() {
       Vue.power = await Vue.prototype.$simulateCall(0, 'get_user_power', '')
       if(isNaN(+Vue.power)) Vue.power = '??'
       if(isNaN(+Vue.power)||Vue.power<=0) {
+        Vue.prototype.$message({
+          type: 'error',
+          showClose: true,
+          duration: 0,
+          message: '您的体力值不足!'
+        });
+      }
+      this.power = Vue.power
+    },
+    async attack(en_team) {
+      if(en_team.length<=0) return
+      if(isNaN(this.power)||Vue.power<=0) {
         Vue.prototype.$message({
           type: 'error',
           showClose: true,
@@ -135,7 +147,7 @@ export default {
     }
   },
   async mounted() {
-    this.power = Vue.power
+    this.updatePower()
     // 获取team信息
     let res = await this.$simulateCall(0, "user_login", "");
     res = JSON.parse(res);
