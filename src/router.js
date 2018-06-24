@@ -40,6 +40,7 @@ router.beforeEach(async (to, from, next) => {
   let address = await Vue.prototype.$simulateCall(0, 'get_address', '')
   Vue.address = JSON.parse(address)
   Vue.power = await Vue.prototype.$simulateCall(0, 'get_user_power', '')
+  handlePower(Vue.power)
   if(isNaN(+Vue.power)) Vue.power = '??'
   const userName = Vue.prototype.getItem('userName')
   if(!userName&&to.name!='home') {
@@ -49,5 +50,15 @@ router.beforeEach(async (to, from, next) => {
   }
 });
 
+function handlePower(power) {
+  if(power <= 0) {
+    Vue.prototype.$message({
+      type: 'error',
+      showClose: true,
+      duration: 0,
+      message: '您的体力值不足，将无法在竞技场比赛!'
+    });
+  }
+}
 
 export default router;

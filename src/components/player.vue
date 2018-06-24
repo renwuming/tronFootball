@@ -2,7 +2,7 @@
   <div class='wrapper' :class="{small: small}">
     <h1 v-if='data.player_name&&data.player_name.length <= 7'>{{data.player_name}}</h1>
     <h1 v-else style='font-size:14px'>{{data.player_name}}</h1>
-    <span v-if="market">成长值：<var>{{data.growth}}</var></span>
+    <span v-if="market">成长值：<var>{{data.growth | value}}</var></span>
     <div class="img-box">
       <img :src="data.avator">
     </div>

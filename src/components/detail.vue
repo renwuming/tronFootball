@@ -12,7 +12,7 @@
     <p class='grow-value'>
       成长值：
       <br>
-      <var>{{data.growth}}</var>
+      <var>{{data.growth | value}}</var>
     </p>
   </div>
 </template>
@@ -130,8 +130,13 @@ export default {
   },
   mounted() {
     // echarts实例
-    const radar = echarts.init(this.$refs.radar);
-    radar.setOption(this.option);
+    this.radar = echarts.init(this.$refs.radar);
+    this.radar.setOption(this.option);
+  },
+  watch: {
+    data() {
+      this.radar.setOption(this.option)
+    }
   }
 };
 </script>

@@ -34,19 +34,7 @@
         <i class="mid-icon fa fa-futbol-o" aria-hidden="true"></i>
         <div class="item me">
           <div class='player-box'>
-            <player :data="attackList[0]"></player>
-          </div>
-        </div>
-      </div>
-      <div class="line right">
-        <div class="item me">
-          <div class='player-box'>
-            <player :data="attackList[1]"></player>
-          </div>
-        </div>
-        <div class="item me">
-          <div class='player-box'>
-            <player :data="attackList[2]"></player>
+            <player :data="attackList[4]"></player>
           </div>
         </div>
       </div>
@@ -58,7 +46,19 @@
         </div>
         <div class="item me">
           <div class='player-box'>
-            <player :data="attackList[4]"></player>
+            <player :data="attackList[2]"></player>
+          </div>
+        </div>
+      </div>
+      <div class="line right">
+        <div class="item me">
+          <div class='player-box'>
+            <player :data="attackList[1]"></player>
+          </div>
+        </div>
+        <div class="item me">
+          <div class='player-box'>
+            <player :data="attackList[0]"></player>
           </div>
         </div>
       </div>
@@ -86,23 +86,36 @@ export default {
   data() {
     return {
       defenseList: this.$route.query.team,
-      // defenseList: this.getItem("playerList"),
-      attackList: this.getItem("playerList"),
       liveStr: "激烈角逐中",
       resultList: [],
       winFlag: false,
     };
   },
-  computed: {},
-  methods: {},
+  computed: {
+    attackList() {
+      const pList = this.getItem("playerList"),
+            team = this.getItem("teamList")
+      return team.map(cid => {
+        return this.getPlayerByCardId(cid, pList)
+      })
+    }
+  },
+  methods: {
+    getPlayerByCardId(cardId, playerList) {
+      for (let i = 0; i < playerList.length; i++) {
+        let p = playerList[i];
+        if (p.cardId == cardId) return p;
+      }
+      return null;
+    }
+  },
   async created() {
+    const self = this;
     let callArgs = `["${this.defenseList[0].address}"]`;
     let result = null;
     let match_id = await this.$simulateCall(0,"get_matchMap_cnt","")
     await this.$call(0,"team_vs",callArgs);
 
-    const self = this;
-    // let winner_growth;
     function getResult() {
       setTimeout(async () => {
         result = await self.$simulateCall(0, "get_match_info", `["${match_id}"]`);
@@ -116,9 +129,19 @@ export default {
           self.resultList = [myScore, enemyScore];
           if(+grow > 0) {
             self.winFlag = true
-            self.$message.success('挑战成功!球员属性获得了提升!')
+            self.$message({
+              type: 'success',
+              showClose: true,
+              duration: 0,
+              message: '挑战成功! 球员属性获得了提升!'
+            });
           } else {
-            self.$message.error('挑战失败!')
+            self.$message({
+              type: 'error',
+              showClose: true,
+              duration: 0,
+              message: '挑战失败!'
+            });
           }
         }
       }, 500);
@@ -126,10 +149,6 @@ export default {
 
     getResult();
 
-    // const myList = ["任无名", "赵无极", "韩如梦", "落霞雨", "任正天"];
-    // const enemyList = ["敌方1", "敌方2", "敌方3", "敌方4", "敌方守门员"];
-    // const resultList = [2, 1];
-    // handleStr.apply(this, [myList.concat(enemyList), ...resultList]);
   }
 };
 </script>
