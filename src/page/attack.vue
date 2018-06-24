@@ -72,7 +72,10 @@ export default {
       this.power = Vue.power
     },
     async attack(en_team) {
-      if(en_team.length<=0) return
+      if(en_team.length<=0) {
+        this.$message.warning('正在加载队伍，请稍候~')
+        return
+      }
       if(isNaN(this.power)||Vue.power<=0) {
         Vue.prototype.$message({
           type: 'error',
