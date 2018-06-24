@@ -8,7 +8,7 @@
         <div class='btn-list'>
           <el-button v-show='!editTeam&&!teamMap[item.cardId]' class='buy-btn' @click='sale(index)'>卖出</el-button>
           <el-button v-show='editTeam&&(waitSelectIndex!=0||item.position==2&&waitSelectIndex==0)' class='select-btn' @click='choose(index)'>选择</el-button>
-          <img src="../assets/img/info.png" class='info-btn hand' @click='showDetail(index)'>
+          <img v-show='item.speed' src="../assets/img/info.png" class='info-btn hand' @click='showDetail(index)'>
         </div>
       </li>
     </ul>
@@ -227,7 +227,9 @@ export default {
           "get_card_id",
           `[${JSON.stringify(cardId)}]`
         );
-        data = JSON.parse(data).split(",");
+        data = JSON.parse(data)
+        if(!data) continue
+        data = data.split(",");
         let [
           avatorId,
           player_name,
@@ -257,6 +259,7 @@ export default {
         resList.push(obj);
       }
       this.playerList = resList;
+      this.handlePlayerStorage(resList, 'home') // 缓存球员头像
       this.setItem('playerList', this.playerList)
     },
     handleTeam(list) {
@@ -276,17 +279,31 @@ export default {
         if (p.cardId == cardId) return p;
       }
       return null;
-    }
+    },
+    loadList(plist) {
+      const map = this.getItem('playerMap') || {}
+      this.playerList = plist.map(cardId => {
+        const data = map[cardId] || {}
+        return {
+          cardId,
+          avatorId: data.avatorId,
+          player_name: data.player_name,
+        }
+      })
+    },
   },
   async created() {
     this.setItem('userName', '???')
     let list = await this.$simulateCall(0, "user_login", "");
     list = JSON.parse(list);
     if (list instanceof Object) {
-      await this.handlePList(list.card_list.split("_").filter(e => !!e));
-      if(list.team) this.handleTeam(list.team.split("_").filter(e => !!e));
-      this.setItem('userName', list.user_name)
       this.loading = false;
+      this.setItem('userName', list.user_name)
+      const plist = list.card_list.split("_").filter(e => !!e)
+      const teamlist = list.team ? list.team.split("_").filter(e => !!e) : []
+      this.loadList(plist)
+      this.handlePList(plist);
+      this.handleTeam(teamlist);
     } else {
       this.firstShow = true
       this.loading = false;

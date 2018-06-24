@@ -124,6 +124,21 @@ export default {
         duration: 0,
         message: '请在区块链交易成功后，刷新页面！'
       });
+    },
+    async handlePower() {
+      Vue.power = await Vue.prototype.$simulateCall(0, 'get_user_power', '')
+      if(isNaN(+Vue.power)) Vue.power = '??'
+      this.handlePowerTip(Vue.power)
+    },
+    handlePowerTip(power) {
+      if(!isNaN(power) && power <= 0) {
+        Vue.prototype.$message({
+          type: 'error',
+          showClose: true,
+          duration: 0,
+          message: '您的体力值不足，将无法在竞技场比赛!'
+        });
+      }
     }
   },
   watch: {
@@ -133,6 +148,7 @@ export default {
       this.power = Vue.power;
       this.init();
       this.userName = this.getItem("userName");
+      this.handlePower()
     }
   },
   mounted() {
@@ -140,6 +156,7 @@ export default {
     this.power = Vue.power;
     const { name, meta } = Vue.currentRouter;
     this.activeMenu = name;
+    this.handlePower()
   }
 };
 </script>

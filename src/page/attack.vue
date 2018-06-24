@@ -58,11 +58,21 @@ export default {
   },
   computed: {},
   methods: {
-    attack(en_team) {
-      this.$router.push({ name: "attackDetail", query: { team: en_team } });
+    async attack(en_team) {
+      Vue.power = await Vue.prototype.$simulateCall(0, 'get_user_power', '')
+      if(isNaN(+Vue.power)) Vue.power = '??'
+      if(isNaN(+Vue.power)||Vue.power<=0) {
+        Vue.prototype.$message({
+          type: 'error',
+          showClose: true,
+          duration: 0,
+          message: '您的体力值不足!'
+        });
+      } else {
+        this.$router.push({ name: "attackDetail", query: { team: en_team } });
+      }
     },
     async init() {
-      this.loading = true;
       let totallist = [];
       let start = this.pageSize * (this.pageNum - 1),
         end = start + this.pageSize;
@@ -97,7 +107,30 @@ export default {
         single_team.address = ele[1];
         totallist.push(single_team);
       }
-      this.defenseList = totallist;
+      if(totallist[0].address == this.defenseList[0].address) {
+        this.defenseList = totallist;
+      }
+    },
+    async handleAddress() {
+      let address = await Vue.prototype.$simulateCall(0, 'get_address', '')
+      Vue.address = JSON.parse(address)
+      this.address = Vue.address
+    },
+    loadList() {
+      let totallist = [];
+      let start = this.pageSize * (this.pageNum - 1),
+        end = start + this.pageSize;
+      if (end > this.pageTotal) end = this.pageTotal;
+      for (let i = start; i < end; i++) {
+        let data = this.toplist[i].replace(/\"/g, "").split(':')
+        const address = data[1],
+              No = data[0],
+              item = []
+        item.No = No
+        item.address = address
+        totallist.push(item)
+      }
+      this.defenseList = totallist
       this.loading = false;
     }
   },
@@ -119,16 +152,18 @@ export default {
         message: "您还没有组建球队！"
       });
     }
-    this.address = Vue.address;
+    this.handleAddress()
     let list = await this.$simulateCall(0, "foreach_rank_card", "");
     if (list.length > 10) {
       this.toplist = list.split("_");
     }
     this.pageTotal = this.toplist.length;
-    await this.init();
+    this.loadList()
+    this.init();
   },
   watch: {
     pageNum() {
+      this.loadList()
       this.init();
     }
   }

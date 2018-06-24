@@ -1,20 +1,21 @@
 <template>
   <div class='wrapper' :class="{small: small}">
     <h1 v-if='data.player_name&&data.player_name.length <= 7'>{{data.player_name}}</h1>
-    <h1 v-else style='font-size:14px'>{{data.player_name}}</h1>
-    <span v-if="market">成长值：<var>{{data.growth | value}}</var></span>
+    <h1 v-else style='font-size:14px'>{{data.player_name || '???'}}</h1>
+    <span v-if="market">成长值：<var v-if='data.growth||data.growth==0'>{{data.growth | value}}</var><var v-else>-</var></span>
     <div class="img-box">
-      <img :src="data.avator">
+      <img v-if='data.avator||data.avatorId' :src="data.avator || avator">
+      <i v-else class="fa fa-spinner fa-pulse fa-3x fa-fw" style='margin-top:30px;font-size:36px;'></i>
     </div>
     <template v-if='!small'>
       <p class="line">
-        进攻：<var>{{+data.shoot + +data.shoot_factor * +data.growth | value}}</var>
+        进攻：<var v-if='attack'>{{attack|value}}</var><var v-else>-</var>
       </p >
       <p class="line">
-        防守：<var>{{+data.defend + +data.defend_factor * +data.growth | value}}</var>
+        防守：<var v-if='defend'>{{defend|value}}</var><var v-else>-</var>
       </p >
       <p class="line">
-        速度：<var>{{+data.speed + +data.speed_factor * +data.growth | value}}</var>
+        速度：<var v-if='speed'>{{speed|value}}</var><var v-else>-</var>
       </p >
     </template>
     <template v-else>
@@ -40,7 +41,26 @@ export default {
   data() {
     return {};
   },
-  computed: {},
+  computed: {
+    avator() {
+      return `${this.$preUrl}${this.data.avatorId}.jpg`
+    },
+    attack() {
+      if(this.data.shoot)
+        return +this.data.shoot + +this.data.shoot_factor * +this.data.growth
+      else return null
+    },
+    defend() {
+      if(this.data.defend)
+        return +this.data.defend + +this.data.defend_factor * +this.data.growth
+      else return null
+    },
+    speed() {
+      if(this.data.speed)
+        return +this.data.speed + +this.data.speed_factor * +this.data.growth
+      else return null
+    },
+  },
   methods: {}
 };
 </script>
@@ -59,10 +79,17 @@ export default {
   }
   .img-box {
     width: 80%;
+    padding-bottom: 80%;
     text-align: center;
     position: relative;
     margin: 10px 0;
-    img {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    img,i {
+      position: absolute;
+      top:0;
+      left:0;
       width: 90%;
     }
   }

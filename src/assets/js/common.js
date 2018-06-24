@@ -91,6 +91,22 @@ common.install = function(Vue) {
     }
   }
 
+  Vue.prototype.handlePlayerStorage = function(list, type) {
+    let map = Vue.prototype.getItem('playerMap')
+    if(!map) map = {}
+    if(type == 'home') {
+      list.forEach(item => {
+        map[item.cardId] = {
+          cardId: item.cardId,
+          avatorId: item.avatorId,
+          player_name: item.player_name,
+        }
+      })
+    }
+
+    Vue.prototype.setItem('playerMap', map)
+  }
+
   const UA = navigator.userAgent.toLowerCase();
 };
 
