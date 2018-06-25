@@ -35,15 +35,4 @@ export const router = new VueRouter({
 });
 
 
-router.beforeEach(async (to, from, next) => {
-  Vue.currentRouter = to
-  const userName = Vue.prototype.getItem('userName')
-  if(!userName&&to.name!='home') {
-    router.push({name: 'home'})
-  } else {
-    next();
-  }
-});
-
-
 export default router;

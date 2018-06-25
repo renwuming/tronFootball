@@ -293,7 +293,6 @@ export default {
     },
   },
   async created() {
-    this.setItem('userName', '???')
     let list = await this.$simulateCall(0, "user_login", "");
     list = JSON.parse(list);
     if (list instanceof Object) {
