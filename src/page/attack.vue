@@ -35,6 +35,7 @@
 import Vue from "vue";
 import player from "../components/player";
 import defenseList from "../components/defenseList";
+import { mapState } from "vuex";
 
 export default {
   props: [],
@@ -51,37 +52,25 @@ export default {
       pageTotal: 0,
       pageSize: 3,
       toplist: [],
-      address: "",
-      teamList: [],
-      power: 0,
+      teamTip: false,
+      powerTip: false,
     };
   },
-  computed: {},
+  computed: {
+    ...mapState(["power",'address','teamList'])
+  },
   methods: {
-    async updatePower() {
-      Vue.power = await Vue.prototype.$simulateCall(0, 'get_user_power', '')
-      if(isNaN(+Vue.power)) Vue.power = '??'
-      if(isNaN(+Vue.power)||Vue.power<=0) {
-        Vue.prototype.$message({
-          type: 'error',
-          showClose: true,
-          duration: 0,
-          message: '您的体力值不足!'
-        });
-      }
-      this.power = Vue.power
-    },
     async attack(en_team) {
-      if(en_team.length<=0) {
-        this.$message.warning('正在加载队伍，请稍候~')
-        return
+      if (en_team.length <= 0) {
+        this.$message.warning("正在加载队伍，请稍候~");
+        return;
       }
-      if(isNaN(this.power)||Vue.power<=0) {
+      if (isNaN(this.power) || Vue.power <= 0) {
         Vue.prototype.$message({
-          type: 'error',
+          type: "error",
           showClose: true,
           duration: 0,
-          message: '您的体力值不足!'
+          message: "您的体力值不足!"
         });
       } else {
         this.$router.push({ name: "attackDetail", query: { team: en_team } });
@@ -122,14 +111,33 @@ export default {
         single_team.address = ele[1];
         totallist.push(single_team);
       }
-      if(totallist[0].address == this.defenseList[0].address) {
+      if (totallist[0].address == this.defenseList[0].address) {
         this.defenseList = totallist;
       }
     },
-    async handleAddress() {
-      let address = await Vue.prototype.$simulateCall(0, 'get_address', '')
-      Vue.address = JSON.parse(address)
-      this.address = Vue.address
+    handlePowerTip() {
+      if(this.powerTip) return
+      if (this.power <= 0) {
+        Vue.prototype.$message({
+          type: "error",
+          showClose: true,
+          duration: 0,
+          message: "您的体力值不足!"
+        });
+        this.powerTip = true
+      }
+    },
+    handleTeamTip() {
+      if(this.teamTip) return
+      if (!this.teamList || (this.teamList && this.teamList.length < 1)) {
+        this.$message({
+          showClose: true,
+          duration: 0,
+          type: "warning",
+          message: "您还没有组建球队！"
+        });
+        this.teamTip = true
+      }
     },
     loadList() {
       let totallist = [];
@@ -137,48 +145,39 @@ export default {
         end = start + this.pageSize;
       if (end > this.pageTotal) end = this.pageTotal;
       for (let i = start; i < end; i++) {
-        let data = this.toplist[i].replace(/\"/g, "").split(':')
+        let data = this.toplist[i].replace(/\"/g, "").split(":");
         const address = data[1],
-              No = data[0],
-              item = []
-        item.No = No
-        item.address = address
-        totallist.push(item)
+          No = data[0],
+          item = [];
+        item.No = No;
+        item.address = address;
+        totallist.push(item);
       }
-      this.defenseList = totallist
+      this.defenseList = totallist;
       this.loading = false;
     }
   },
   async mounted() {
-    this.updatePower()
-    // 获取team信息
-    let res = await this.$simulateCall(0, "user_login", "");
-    res = JSON.parse(res);
-    if (res instanceof Object) {
-      let teamList = res.team.split("_").filter(e => !!e);
-      this.setItem("teamList", teamList);
-      this.teamList = teamList
-    }
-    if(!this.teamList || (this.teamList && this.teamList.length < 1)) {
-      this.$message({
-        showClose: true,
-        duration: 0,
-        type: "warning",
-        message: "您还没有组建球队！"
-      });
-    }
-    this.handleAddress()
+    this.handlePowerTip()
+    this.handleTeamTip()
+
     let list = await this.$simulateCall(0, "foreach_rank_card", "");
     if (list.length > 10) {
       this.toplist = list.split("_");
     }
     this.pageTotal = this.toplist.length;
-    this.loadList()
+    this.loadList();
     this.init();
   },
   watch: {
+    power() {
+      this.handlePowerTip()
+    },
+    teamList() {
+      this.handleTeamTip()
+    },
     pageNum() {
-      this.loadList()
+      this.loadList();
       this.init();
     }
   }

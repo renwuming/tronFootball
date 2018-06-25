@@ -9,7 +9,7 @@
     </el-header>
     <el-container class='wrapper'>
       <el-header height=40>
-        <el-menu :default-active='activeMenu' :router='true'>
+        <el-menu :default-active='currentRouter' :router='true'>
           <el-menu-item index="market" route='/'>球员市场</el-menu-item>
           <el-menu-item index="home" route='/home'>我的球员</el-menu-item>
           <el-menu-item index="attack" route='/attack'>竞技场</el-menu-item>
@@ -22,17 +22,17 @@
     <div class="top-btn">
       <span>获取球员</span>
     </div>
-    <div class="free-btn hand no-hover" @click='getFree'>
+    <div v-show='freeFlag' class="free-btn hand no-hover" @click='getFree'>
       <el-tooltip class="item" effect="dark" content="新玩家限一次，免费抽取5名球员" placement="right">
         <i class="fa" style='font-size:30px;'>free!</i>
       </el-tooltip>
     </div>
-    <div class="normal-btn free-btn hand no-hover" @click='getCommon'>
+    <div v-show='commonPrice' class="normal-btn free-btn hand no-hover" @click='getCommon'>
       <el-tooltip class="item" effect="dark" content="较少花费，抽取1名普通球员" placement="right">
         <i class="fa fa-gift" aria-hidden="true"></i>
       </el-tooltip>
     </div>
-    <div class="vip-btn free-btn hand no-hover" @click='getVIP'>
+    <div v-show='vipPrice' class="vip-btn free-btn hand no-hover" @click='getVIP'>
       <el-tooltip class="item" effect="dark" content="较多花费，抽取1名优秀球员" placement="right">
         <i class="fa fa-gift" aria-hidden="true"></i>
       </el-tooltip>
@@ -46,7 +46,7 @@
         <i class="fa fa-medkit" aria-hidden="true"></i>
       </el-tooltip>
     </div>
-    <div class="power-btn free-power-btn hand no-hover" @click='getPower'>
+    <div v-show='powerPrice' class="power-btn free-power-btn hand no-hover" @click='getPower'>
       <el-tooltip class="item" effect="dark" content="较少花费，增加5点体力" placement="left">
         <i class="fa fa-medkit" aria-hidden="true"></i>
       </el-tooltip>
@@ -57,34 +57,26 @@
 
 <script>
 import Vue from "vue";
+import { mapState } from 'vuex'
 
 export default {
   data() {
     return {
       activeMenu: null,
-      userName: "",
-      power: "-"
     };
+  },
+  computed: {
+    ...mapState(['power','userName','commonPrice','vipPrice','powerPrice','currentRouter','freeFlag'])
   },
   methods: {
     async init() {
-      let commonPrice = await this.$simulateCall(
-        0,
-        "get_common_card_price",
-        ""
-      );
-      this.setItem("commonPrice", commonPrice);
-      let vipPrice = await this.$simulateCall(0, "get_vip_card_price", "");
-      this.setItem("vipPrice", vipPrice);
-      let powerPrice = await this.$simulateCall(0, "get_power_price", "");
-      this.setItem("powerPrice", powerPrice);
     },
     async getFree() {
       let data = await this.$call(0, "get_free_card", "");
       this.$message({
         showClose: true,
         duration: 0,
-        message: '请在区块链交易成功后，刷新页面！'
+        message: "请在区块链交易成功后，刷新页面！"
       });
     },
     async getCommon() {
@@ -94,7 +86,7 @@ export default {
       this.$message({
         showClose: true,
         duration: 0,
-        message: '请在区块链交易成功后，刷新页面！'
+        message: "请在区块链交易成功后，刷新页面！"
       });
     },
     async getVIP() {
@@ -104,7 +96,7 @@ export default {
       this.$message({
         showClose: true,
         duration: 0,
-        message: '请在区块链交易成功后，刷新页面！'
+        message: "请在区块链交易成功后，刷新页面！"
       });
     },
     async getPower() {
@@ -114,7 +106,7 @@ export default {
       this.$message({
         showClose: true,
         duration: 0,
-        message: '请在区块链交易成功后，刷新页面！'
+        message: "请在区块链交易成功后，刷新页面！"
       });
     },
     async getFreePower() {
@@ -122,42 +114,26 @@ export default {
       this.$message({
         showClose: true,
         duration: 0,
-        message: '请在区块链交易成功后，刷新页面！'
+        message: "请在区块链交易成功后，刷新页面！"
       });
     },
-    async handlePower() {
-      Vue.power = await Vue.prototype.$simulateCall(0, 'get_user_power', '')
-      if(isNaN(+Vue.power)) Vue.power = '??'
-      this.handlePowerTip(Vue.power)
-    },
     handlePowerTip(power) {
-      if(!isNaN(power) && power <= 0) {
+      if (!isNaN(power) && power <= 0) {
         Vue.prototype.$message({
-          type: 'error',
+          type: "error",
           showClose: true,
           duration: 0,
-          message: '您的体力值不足，将无法在竞技场比赛!'
+          message: "您的体力值不足，将无法在竞技场比赛!"
         });
       }
     }
   },
   watch: {
     $route() {
-      const { name, meta } = Vue.currentRouter;
-      this.activeMenu = name;
-      this.power = Vue.power;
-      this.init();
-      this.userName = this.getItem("userName");
-      this.handlePower()
     }
   },
   mounted() {
-    this.userName = this.getItem("userName");
-    this.power = Vue.power;
-    const { name, meta } = Vue.currentRouter;
-    this.activeMenu = name;
-    this.handlePower()
-  }
+  },
 };
 </script>
 
@@ -263,7 +239,7 @@ h1 {
 .free-btn {
   position: fixed;
   left: -10px;
-  top: 100px;
+  top: 340px;
   width: 100px;
   height: 100px;
   font-size: 80px;
@@ -293,7 +269,7 @@ h1 {
   }
 }
 .normal-btn {
-  top: 220px;
+  top: 100px;
   border: 2px solid #fe5882;
   &:hover {
     background-color: #fe5882;
@@ -306,7 +282,7 @@ h1 {
   }
 }
 .vip-btn {
-  top: 340px;
+  top: 220px;
   border: 2px solid #ffff00;
   &:hover {
     background-color: #ffff00;
