@@ -1,7 +1,7 @@
 <template>
   <div class="wrapper">
     <ul class='player-list'>
-      <li v-for='(item2,index) in list'>
+      <li v-for='(item2,index) in dataList'>
         <player :market='false' :small='false' :data='item2'></player>
         <p v-if='index == 0' class='pos-btn'>守门员</p>
       </li>
@@ -15,7 +15,10 @@ import player from "../components/player";
 
 export default {
   props: {
-    list : Array,
+    list: {
+      default: _ => [1,1,1,1,1],
+      type: Array,
+    }
   },
   components: {
     player
@@ -24,8 +27,12 @@ export default {
     return {
     };
   },
-  computed: {},
-  methods: {}
+  computed: {
+    dataList() {
+      return this.list.length ? this.list : [1,2,3,4,5]
+    }
+  },
+  methods: {},
 };
 </script>
 

@@ -103,6 +103,14 @@ common.install = function(Vue) {
         }
       })
     }
+    if(type == 'attack') {
+      const item = list
+      map[item.cardId] = {
+        cardId: item.cardId,
+        avatorId: item.avatorId,
+        player_name: item.player_name,
+      }
+    }
 
     Vue.prototype.setItem('playerMap', map)
   }
