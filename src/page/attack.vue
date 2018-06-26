@@ -54,6 +54,8 @@ export default {
       toplist: [],
       teamTip: false,
       powerTip: false,
+      pageChange: 1,
+      initDetailCount: 0,
     };
   },
   computed: {
@@ -82,17 +84,56 @@ export default {
         end = start + this.pageSize;
       if (end > this.pageTotal) end = this.pageTotal;
       for (let i = start; i < end; i++) {
-        let single_team = [];
         let ele = this.toplist[i].replace(/\"/g, "").split(":");
         let callArgs_d = `["${ele[1]}"]`;
         let detail = await this.$simulateCall(0, "get_user_player", callArgs_d);
         detail = JSON.parse(detail);
-        let team = detail.team.split("_").slice(1, 6);
-        for (let j = 0; j < 5; j++) {
+        let team = detail.team.split("_").slice(1, 6).map(id => {
+          return {
+            cardId: id,
+          }
+        })
+        team.No = i + 1;
+        team.address = ele[1];
+        totallist.push(team);
+      }
+      if (totallist[0].address == this.defenseList[0].address) {
+        this.defenseList = totallist;
+        this.loadDetalFromStorage()
+        this.initDetail()
+      }
+    },
+    loadDetalFromStorage() {
+      const map = this.getItem('playerMap') || {}
+      for(let i=0;i<this.defenseList.length;i++) {
+        const team = this.defenseList[i]
+        for (let j = 0; j < team.length; j++) {
+          const cardId = team[j].cardId
+          if(!map[cardId]) continue
+          team[j] = map[cardId]
+          const newTeam = team.concat()
+          newTeam.address = team.address
+          newTeam.No = team.No
+          this.$set(this.defenseList,i,newTeam)
+        }
+      }
+    },
+    async initDetail() {
+      this.initDetailCount++
+      for(let i=0;i<this.defenseList.length;i++) {
+        if(this.pageChange != this.initDetailCount) return; // init次数与翻页次数不同，则退出
+        if(!this.defenseList[i]) return
+        const team = this.defenseList[i]
+        for (let j = 0; j < team.length; j++) {
+          if(this.pageChange != this.initDetailCount) return; // init次数与翻页次数不同，则退出
           let member_j = {};
-          let callArgs_m = `["${team[j]}"]`;
+          if(!team[j] instanceof Object) return
+          const cardId = team[j].cardId
+          let callArgs_m = `["${cardId}"]`;
           let member = await this.$simulateCall(0, "get_card_id", callArgs_m);
+          if(this.pageChange != this.initDetailCount) return; // init次数与翻页次数不同，则退出
           let member_num = member.replace(/\"/g, "").split(",");
+          member_j["cardId"] = cardId;
           member_j["avatorId"] = member_num[0];
           member_j["player_name"] = member_num[1];
           member_j["shoot"] = member_num[2];
@@ -104,15 +145,13 @@ export default {
           member_j["position"] = member_num[8];
           member_j["growth"] = member_num[9];
           member_j["avator"] = `${this.$preUrl}${member_j["avatorId"]}.jpg`;
-          member_j["address"] = ele[1];
-          single_team.push(member_j);
+          team[j] = member_j
+          this.handlePlayerStorage(member_j, 'attack') // 缓存球员头像
+          const newTeam = team.concat()
+          newTeam.address = team.address
+          newTeam.No = team.No
+          this.$set(this.defenseList,i,newTeam)
         }
-        single_team.No = i + 1;
-        single_team.address = ele[1];
-        totallist.push(single_team);
-      }
-      if (totallist[0].address == this.defenseList[0].address) {
-        this.defenseList = totallist;
       }
     },
     handlePowerTip() {
@@ -158,8 +197,8 @@ export default {
     }
   },
   async mounted() {
-    this.handlePowerTip()
-    this.handleTeamTip()
+    // this.handlePowerTip()
+    // this.handleTeamTip()
 
     let list = await this.$simulateCall(0, "foreach_rank_card", "");
     if (list.length > 10) {
@@ -177,6 +216,7 @@ export default {
       this.handleTeamTip()
     },
     pageNum() {
+      this.pageChange++
       this.loadList();
       this.init();
     }

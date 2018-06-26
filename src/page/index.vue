@@ -76,6 +76,7 @@ export default {
         let detail = this.topList[j].split("~");
         let num = detail[1].split(",");
         players.player_id = detail[0].replace('"', "");
+        players.cardId = players.player_id
         let [
           avatorId,
           player_name,
@@ -99,8 +100,8 @@ export default {
         players.position = position;
         players.growth = growth;
         players.price = detail[2].replace('"', "");
-
         players.avator = `${this.$preUrl}${players.avatorId}.jpg`;
+        this.handlePlayerStorage(players, 'attack') // 缓存球员头像
         player_list.push(players);
       }
       this.playerList = player_list;
