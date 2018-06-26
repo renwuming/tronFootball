@@ -18,7 +18,8 @@ Vue.prototype.$preUrl = 'https://sec-cdn.static.xiaomi.net/secStatic/groups/miui
 const NebPay = _require('nebpay')
 Vue.prototype.$NebPay = new NebPay()
 
-const addr = 'n1nTApZ98G5Apq9CVMid3k3aGu2FamkMUWk';
+
+const addr = 'n1oQBuAkvnAuLxCEefGtewbuARbrS6KzL5f';
 
 Vue.prototype.$addr = addr
 
@@ -85,6 +86,7 @@ async function init() {
     data = JSON.parse(data);
     if (data instanceof Object) {
       const teamList = data.team ? data.team.split("_").filter(e => !!e) : []
+      console.log(teamList,'>>>>>>>>>')
       store.commit({
         type: 'update',
         userName: data.user_name,
@@ -107,7 +109,10 @@ async function init() {
     })
   })
 
-  const {commonPrice, vipPrice, powerPrice, address} = store.state
+  const { address } = store.state
+  const commonPrice = self.getItem('commonPrice'),
+        vipPrice = self.getItem('vipPrice'),
+        powerPrice = self.getItem('powerPrice')
   if(!address) self.$simulateCall(0, "get_address", "").then(data => {
     data = JSON.parse(data)
     store.commit({
@@ -115,24 +120,43 @@ async function init() {
       address: data,
     })
   })
-  if(!commonPrice) self.$simulateCall(0,"get_common_card_price","").then(data => {
+  if(!commonPrice) {
+    self.$simulateCall(0,"get_common_card_price","").then(data => {
+    self.setItem('commonPrice',data)
     store.commit({
       type: 'update',
       commonPrice: data,
     })
-  })
-  if(!vipPrice) self.$simulateCall(0,"get_vip_card_price","").then(data => {
+  }) } else {
+    store.commit({
+      type: 'update',
+      commonPrice,
+    })
+  }
+  if(!vipPrice) { self.$simulateCall(0,"get_vip_card_price","").then(data => {
+    self.setItem('vipPrice',data)
     store.commit({
       type: 'update',
       vipPrice: data,
     })
-  })
-  if(!powerPrice) self.$simulateCall(0,"get_power_price","").then(data => {
+  }) } else {
+    store.commit({
+      type: 'update',
+      vipPrice,
+    })
+  }
+  if(!powerPrice) { self.$simulateCall(0,"get_power_price","").then(data => {
+    self.setItem('powerPrice',data)
     store.commit({
       type: 'update',
       powerPrice: data,
     })
-  })
+  }) } else {
+    store.commit({
+      type: 'update',
+      powerPrice,
+    })
+  }
 
 }
 

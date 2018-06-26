@@ -133,6 +133,7 @@ export default {
           let member = await this.$simulateCall(0, "get_card_id", callArgs_m);
           if(this.pageChange != this.initDetailCount) return; // init次数与翻页次数不同，则退出
           let member_num = member.replace(/\"/g, "").split(",");
+          let ele = this.toplist[i].replace(/\"/g, "").split(":");
           member_j["cardId"] = cardId;
           member_j["avatorId"] = member_num[0];
           member_j["player_name"] = member_num[1];
@@ -144,6 +145,7 @@ export default {
           member_j["speed_factor"] = member_num[7];
           member_j["position"] = member_num[8];
           member_j["growth"] = member_num[9];
+          member_j["address"] = ele[1];
           member_j["avator"] = `${this.$preUrl}${member_j["avatorId"]}.jpg`;
           team[j] = member_j
           this.handlePlayerStorage(member_j, 'attack') // 缓存球员头像

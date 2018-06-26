@@ -88,16 +88,16 @@ export default {
       defenseList: this.$route.query.team,
       liveStr: "激烈角逐中",
       resultList: [],
-      winFlag: false,
+      winFlag: false
     };
   },
   computed: {
     attackList() {
       const pList = this.getItem("playerList"),
-            team = this.getItem("teamList")
+        team = this.getItem("teamList");
       return team.map(cid => {
-        return this.getPlayerByCardId(cid, pList)
-      })
+        return this.getPlayerByCardId(cid, pList);
+      });
     }
   },
   methods: {
@@ -107,18 +107,48 @@ export default {
         if (p.cardId == cardId) return p;
       }
       return null;
+    },
+    async init() {
+      const team = this.defenseList;
+      for (let j = 0; j < team.length; j++) {
+        let member_j = {};
+        const cardId = team[j].cardId;
+        let callArgs_m = `["${cardId}"]`;
+        let member = await this.$simulateCall(0, "get_card_id", callArgs_m);
+        if (this.pageChange != this.initDetailCount) return; // init次数与翻页次数不同，则退出
+        let member_num = member.replace(/\"/g, "").split(",");
+        member_j["cardId"] = cardId;
+        member_j["avatorId"] = member_num[0];
+        member_j["player_name"] = member_num[1];
+        member_j["shoot"] = member_num[2];
+        member_j["defend"] = member_num[3];
+        member_j["speed"] = member_num[4];
+        member_j["shoot_factor"] = member_num[5];
+        member_j["defend_factor"] = member_num[6];
+        member_j["speed_factor"] = member_num[7];
+        member_j["position"] = member_num[8];
+        member_j["growth"] = member_num[9];
+        member_j["avator"] = `${this.$preUrl}${member_j["avatorId"]}.jpg`;
+        this.handlePlayerStorage(member_j, 'attack') // 缓存球员头像
+        this.$set(this.defenseList, j, member_j);
+      }
     }
   },
   async created() {
+    this.init();
     const self = this;
     let callArgs = `["${this.defenseList[0].address}"]`;
     let result = null;
-    let match_id = await this.$simulateCall(0,"get_matchMap_cnt","")
-    await this.$call(0,"team_vs",callArgs);
+    let match_id = await this.$simulateCall(0, "get_matchMap_cnt", "");
+    await this.$call(0, "team_vs", callArgs);
 
     function getResult() {
       setTimeout(async () => {
-        result = await self.$simulateCall(0, "get_match_info", `["${match_id}"]`);
+        result = await self.$simulateCall(
+          0,
+          "get_match_info",
+          `["${match_id}"]`
+        );
         if (result == "null" || !result) {
           getResult();
         } else {
@@ -127,20 +157,20 @@ export default {
           let [addr1, addr2, myScore, enemyScore, grow] = resultback;
           grow = parseFloat(grow);
           self.resultList = [myScore, enemyScore];
-          if(+grow > 0) {
-            self.winFlag = true
+          if (+grow > 0) {
+            self.winFlag = true;
             self.$message({
-              type: 'success',
+              type: "success",
               showClose: true,
               duration: 0,
-              message: '挑战成功! 球员属性获得了提升!'
+              message: "挑战成功! 球员属性获得了提升!"
             });
           } else {
             self.$message({
-              type: 'error',
+              type: "error",
               showClose: true,
               duration: 0,
-              message: '挑战失败!'
+              message: "挑战失败!"
             });
           }
         }
@@ -148,7 +178,6 @@ export default {
     }
 
     getResult();
-
   }
 };
 </script>

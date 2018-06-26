@@ -2,7 +2,7 @@
   <el-container>
     <el-header class='header-top'>
       <img class='logo' src="./assets/img/logo.png">
-      <h1 style='font-style: italic;border-bottom: 2px solid;border-top: 2px solid;'>Footbal On Chain</h1>
+      <h1 style='font-style: italic;border-bottom: 2px solid;border-top: 2px solid;'>Football On Chain</h1>
       <div class='user-box'>
         <span v-if='userName'>{{userName}} · <span style='font-size:16px;'>体力 <span style='display:inline-block;width:20px;'>{{power}}</span></span></span>
       </div>

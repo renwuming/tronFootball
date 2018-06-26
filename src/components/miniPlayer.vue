@@ -1,15 +1,16 @@
 <template>
   <div class='wrapper'>
-    <h1 v-if='data.player_name.length <= 7'>{{data.player_name}}</h1>
-    <h1 v-else style='font-size:14px'>{{data.player_name}}</h1>
+    <h1 v-if='data.player_name&&data.player_name.length <= 7'>{{data.player_name}}</h1>
+    <h1 v-else style='font-size:14px'>{{data.player_name || '???'}}</h1>
     <div class="detail">
       <div class="img-box">
-        <img :src="data.avator">
+        <img v-if='data.avator||data.avatorId' :src="data.avator || avator">
+        <i v-else class="fa fa-spinner fa-pulse fa-3x fa-fw" style='margin-top:30px;font-size:36px;'></i>
       </div>
       <div class='value-box'>
-        <p>进攻 {{+data.shoot + +data.shoot_factor * +data.growth | value}}</p>
-        <p>防守 {{+data.defend + +data.defend_factor * +data.growth | value}}</p>
-        <p>速度 {{+data.speed + +data.speed_factor * +data.growth | value}}</p>
+        <p>进攻 <var v-if='attack'>{{attack|value}}</var><var v-else>-</var></p>
+        <p>防守 <var v-if='defend'>{{defend|value}}</var><var v-else>-</var></p>
+        <p>速度 <var v-if='speed'>{{speed|value}}</var><var v-else>-</var></p>
       </div>
     </div>
   </div>
@@ -24,7 +25,27 @@ export default {
   data() {
     return {};
   },
-  computed: {},
+
+  computed: {
+    avator() {
+      return `${this.$preUrl}${this.data.avatorId}.jpg`
+    },
+    attack() {
+      if(this.data.shoot)
+        return +this.data.shoot + +this.data.shoot_factor * +this.data.growth
+      else return null
+    },
+    defend() {
+      if(this.data.defend)
+        return +this.data.defend + +this.data.defend_factor * +this.data.growth
+      else return null
+    },
+    speed() {
+      if(this.data.speed)
+        return +this.data.speed + +this.data.speed_factor * +this.data.growth
+      else return null
+    },
+  },
   methods: {}
 };
 </script>
@@ -51,17 +72,29 @@ export default {
     font-size: 18px;
     color: #fff;
   }
+
   .img-box {
     width: 100px;
     text-align: center;
     position: relative;
-    img {
+    padding-bottom: 100px;
+    margin: 10px 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    img,i {
+      position: absolute;
+      top:0;
+      left:0;
       width: 90%;
     }
   }
   p {
     color: #fff;
     font-size: 14px;
+  }
+  var {
+    font-style: normal
   }
 }
 </style>
