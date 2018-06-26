@@ -75,7 +75,7 @@ export default {
           message: "您的体力值不足!"
         });
       } else {
-        this.$router.push({ name: "attackDetail", query: { team: en_team } });
+        this.$router.push({ name: "attackDetail", query: { team: en_team, address: en_team.address } });
       }
     },
     async init() {

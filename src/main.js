@@ -86,7 +86,6 @@ async function init() {
     data = JSON.parse(data);
     if (data instanceof Object) {
       const teamList = data.team ? data.team.split("_").filter(e => !!e) : []
-      console.log(teamList,'>>>>>>>>>')
       store.commit({
         type: 'update',
         userName: data.user_name,

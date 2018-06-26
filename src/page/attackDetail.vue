@@ -86,6 +86,7 @@ export default {
   data() {
     return {
       defenseList: this.$route.query.team,
+      address: this.$route.query.address,
       liveStr: "激烈角逐中",
       resultList: [],
       winFlag: false
@@ -137,7 +138,7 @@ export default {
   async created() {
     this.init();
     const self = this;
-    let callArgs = `["${this.defenseList[0].address}"]`;
+    let callArgs = `["${this.address}"]`;
     let result = null;
     let match_id = await this.$simulateCall(0, "get_matchMap_cnt", "");
     await this.$call(0, "team_vs", callArgs);
