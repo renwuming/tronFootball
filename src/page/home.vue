@@ -256,11 +256,9 @@ export default {
         };
         obj.avator = `${this.$preUrl}${avatorId}.jpg`;
         obj.cardId = cardId; // 卡片id
-        resList.push(obj);
+        this.$set(this.playerList,i,obj)
+        this.handlePlayerStorage(obj, 'attack') // 缓存球员头像
       }
-      this.playerList = resList;
-      this.handlePlayerStorage(resList, 'home') // 缓存球员头像
-      this.setItem('playerList', this.playerList)
     },
     handleTeam(list) {
       this.teamList = list;

@@ -70,6 +70,7 @@
         <p style='font-size:20px;width:100%;display:flex;justify-content:center;'><span style='width:160px;text-align:center;'>我方</span><span style='display:inline-block;width:40px;text-align:center;'></span><span style='width:160px;text-align:center;'>敌方</span></p>
         <p v-show='winFlag' class='win-box'>获胜!</p>
         <p v-show='!winFlag' class='lose-box'>失败</p>
+        <p class="bottom-btn hand" @click='challenge'>再次挑战</p>
       </div>
     </div>
   </div>
@@ -94,14 +95,60 @@ export default {
   },
   computed: {
     attackList() {
-      const pList = this.getItem("playerList"),
-        team = this.getItem("teamList");
+      const team = this.getItem("teamList");
+      const map = this.getItem('playerMap') || {}
       return team.map(cid => {
-        return this.getPlayerByCardId(cid, pList);
+        return map[cid]
       });
     }
   },
   methods: {
+    async challenge() {
+      this.resultList = []
+      const self = this;
+      let callArgs = `["${this.address}"]`;
+      let result = null;
+      let match_id = await this.$simulateCall(0, "get_matchMap_cnt", "");
+      await this.$call(0, "team_vs", callArgs);
+
+      function getResult() {
+        setTimeout(async () => {
+          result = await self.$simulateCall(
+            0,
+            "get_match_info",
+            `["${match_id}"]`
+          );
+          if (result == "null" || !result) {
+            getResult();
+          } else {
+            let resultback = result.split("_");
+
+            let [addr1, addr2, myScore, enemyScore, grow] = resultback;
+            grow = parseFloat(grow);
+            self.resultList = [myScore, enemyScore];
+            if (+grow > 0) {
+              self.winFlag = true;
+              self.$message({
+                type: "success",
+                showClose: true,
+                duration: 0,
+                message: "挑战成功! 球员属性获得了提升!"
+              });
+            } else {
+              self.winFlag = false;
+              self.$message({
+                type: "error",
+                showClose: true,
+                duration: 0,
+                message: "挑战失败!"
+              });
+            }
+          }
+        }, 500);
+      }
+
+      getResult();
+    },
     getPlayerByCardId(cardId, playerList) {
       for (let i = 0; i < playerList.length; i++) {
         let p = playerList[i];
@@ -133,52 +180,38 @@ export default {
         this.handlePlayerStorage(member_j, 'attack') // 缓存球员头像
         this.$set(this.defenseList, j, member_j);
       }
+    },
+    async initMe() {
+      const team = this.attackList;
+      for (let j = 0; j < team.length; j++) {
+        let member_j = {};
+        const cardId = team[j].cardId;
+        let callArgs_m = `["${cardId}"]`;
+        let member = await this.$simulateCall(0, "get_card_id", callArgs_m);
+        if (this.pageChange != this.initDetailCount) return; // init次数与翻页次数不同，则退出
+        let member_num = member.replace(/\"/g, "").split(",");
+        member_j["cardId"] = cardId;
+        member_j["avatorId"] = member_num[0];
+        member_j["player_name"] = member_num[1];
+        member_j["shoot"] = member_num[2];
+        member_j["defend"] = member_num[3];
+        member_j["speed"] = member_num[4];
+        member_j["shoot_factor"] = member_num[5];
+        member_j["defend_factor"] = member_num[6];
+        member_j["speed_factor"] = member_num[7];
+        member_j["position"] = member_num[8];
+        member_j["growth"] = member_num[9];
+        member_j["avator"] = `${this.$preUrl}${member_j["avatorId"]}.jpg`;
+        this.handlePlayerStorage(member_j, 'attack') // 缓存球员头像
+        this.$set(this.attackList, j, member_j);
+      }
     }
   },
   async created() {
     this.init();
-    const self = this;
-    let callArgs = `["${this.address}"]`;
-    let result = null;
-    let match_id = await this.$simulateCall(0, "get_matchMap_cnt", "");
-    await this.$call(0, "team_vs", callArgs);
+    this.initMe();
 
-    function getResult() {
-      setTimeout(async () => {
-        result = await self.$simulateCall(
-          0,
-          "get_match_info",
-          `["${match_id}"]`
-        );
-        if (result == "null" || !result) {
-          getResult();
-        } else {
-          let resultback = result.split("_");
-
-          let [addr1, addr2, myScore, enemyScore, grow] = resultback;
-          grow = parseFloat(grow);
-          self.resultList = [myScore, enemyScore];
-          if (+grow > 0) {
-            self.winFlag = true;
-            self.$message({
-              type: "success",
-              showClose: true,
-              duration: 0,
-              message: "挑战成功! 球员属性获得了提升!"
-            });
-          } else {
-            self.$message({
-              type: "error",
-              showClose: true,
-              duration: 0,
-              message: "挑战失败!"
-            });
-          }
-        }
-      }, 500);
-    }
-
-    getResult();
+    this.challenge()
   }
 };
 </script>
@@ -235,6 +268,18 @@ export default {
     flex-direction: column;
     align-items: center;
     padding: 20px;
+
+    .bottom-btn {
+      position: absolute;
+      bottom: -30px;
+      background-color: rgb(236, 185, 30);
+      width: 200px;
+      height: 40px;
+      line-height: 40px;
+      text-align: center;
+      color: #fff;
+      border-radius: 20px;
+    }
     .text-live {
       width: 100%;
       font-size: 22px;

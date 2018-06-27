@@ -19,7 +19,7 @@ const NebPay = _require('nebpay')
 Vue.prototype.$NebPay = new NebPay()
 
 
-const addr = 'n1oQBuAkvnAuLxCEefGtewbuARbrS6KzL5f';
+const addr = 'n1yiPEFvUBRuAmitbotASmWbXunF1NfGspH';
 
 Vue.prototype.$addr = addr
 

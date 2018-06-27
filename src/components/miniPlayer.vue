@@ -65,7 +65,7 @@ export default {
     margin-top: 10px;
     .value-box {
       margin-left: 10px;
-      width: 70px;
+      width: 90px;
     }
   }
   h1 {
