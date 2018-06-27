@@ -2,49 +2,17 @@
   <div class="content"
     v-loading='loading'
   >
-    <ul class='player-list'>
-      <li v-for='(item,index) in playerList' :key='item.cardId'>
-        <player :data='item'></player>
-        <div class='btn-list'>
-          <el-button v-show='!editTeam&&!teamMap[item.cardId]' class='buy-btn' @click='sale(index)'>卖出</el-button>
-          <el-button v-show='editTeam&&(waitSelectIndex!=0||item.position==2&&waitSelectIndex==0)' class='select-btn' @click='choose(index)'>选择</el-button>
-          <img v-show='item.speed' src="../assets/img/info.png" class='info-btn hand' @click='showDetail(index)'>
-        </div>
-      </li>
-    </ul>
     <div class="defense-box">
-      <div class="line">
-        <div v-show='teamList[4]' class="item">
+      <div class="line2">
+        <div v-show='teamList[0]' class="item">
           <div class='player-box'>
-            <player :data='teamPList[4]'></player>
+            <player :data='teamPList[0]'></player>
           </div>
-          <div class="bottom-btn hand unselect" @click='unselect(4)'>替换球员</div>
+          <div class="bottom-btn hand unselect" @click='unselect(0)'>替换守门员</div>
         </div>
-        <div v-show='!teamList[4]' class='item' :class='{selecting: waitSelectIndex==4}'>
+        <div v-show='!teamList[0]' class='item' :class='{selecting: waitSelectIndex==0}'>
           <i class="fa fa-question-circle" aria-hidden="true"></i>
-          <div class="bottom-btn hand" @click='select(4)'>选择球员</div>
-        </div>
-        <div v-show='teamList[3]' class="item">
-          <div class='player-box'>
-            <player :data='teamPList[3]'></player>
-          </div>
-          <div class="bottom-btn hand unselect" @click='unselect(3)'>替换球员</div>
-        </div>
-        <div v-show='!teamList[3]' class='item' :class='{selecting: waitSelectIndex==3}'>
-          <i class="fa fa-question-circle" aria-hidden="true"></i>
-          <div class="bottom-btn hand" @click='select(3)'>选择球员</div>
-        </div>
-      </div>
-      <div class="line">
-        <div v-show='teamList[2]' class="item">
-          <div class='player-box'>
-            <player :data='teamPList[2]'></player>
-          </div>
-          <div class="bottom-btn hand unselect" @click='unselect(2)'>替换球员</div>
-        </div>
-        <div v-show='!teamList[2]' class='item' :class='{selecting: waitSelectIndex==2}'>
-          <i class="fa fa-question-circle" aria-hidden="true"></i>
-          <div class="bottom-btn hand" @click='select(2)'>选择球员</div>
+          <div class="bottom-btn hand" @click='select(0)'>选择守门员</div>
         </div>
         <div v-show='teamList[1]' class="item">
           <div class='player-box'>
@@ -56,21 +24,49 @@
           <i class="fa fa-question-circle" aria-hidden="true"></i>
           <div class="bottom-btn hand" @click='select(1)'>选择球员</div>
         </div>
-      </div>
-      <div class="line">
-        <div v-show='teamList[0]' class="item">
+        <div v-show='teamList[2]' class="item">
           <div class='player-box'>
-            <player :data='teamPList[0]'></player>
+            <player :data='teamPList[2]'></player>
           </div>
-          <div class="bottom-btn hand unselect" @click='unselect(0)'>替换守门员</div>
+          <div class="bottom-btn hand unselect" @click='unselect(2)'>替换球员</div>
         </div>
-        <div v-show='!teamList[0]' class='item' :class='{selecting: waitSelectIndex==0}'>
+        <div v-show='!teamList[2]' class='item' :class='{selecting: waitSelectIndex==2}'>
           <i class="fa fa-question-circle" aria-hidden="true"></i>
-          <div class="bottom-btn hand" @click='select(0)'>选择守门员</div>
+          <div class="bottom-btn hand" @click='select(2)'>选择球员</div>
+        </div>
+        <div v-show='teamList[3]' class="item">
+          <div class='player-box'>
+            <player :data='teamPList[3]'></player>
+          </div>
+          <div class="bottom-btn hand unselect" @click='unselect(3)'>替换球员</div>
+        </div>
+        <div v-show='!teamList[3]' class='item' :class='{selecting: waitSelectIndex==3}'>
+          <i class="fa fa-question-circle" aria-hidden="true"></i>
+          <div class="bottom-btn hand" @click='select(3)'>选择球员</div>
+        </div>
+        <div v-show='teamList[4]' class="item">
+          <div class='player-box'>
+            <player :data='teamPList[4]'></player>
+          </div>
+          <div class="bottom-btn hand unselect" @click='unselect(4)'>替换球员</div>
+        </div>
+        <div v-show='!teamList[4]' class='item' :class='{selecting: waitSelectIndex==4}'>
+          <i class="fa fa-question-circle" aria-hidden="true"></i>
+          <div class="bottom-btn hand" @click='select(4)'>选择球员</div>
         </div>
       </div>
       <el-button class='defense-confirm-btn' :disabled="!teamValid" @click='submitTeam'>提交队伍</el-button>
     </div>
+    <ul class='player-list'>
+      <li v-for='(item,index) in playerList' :key='item.cardId'>
+        <player :data='item'></player>
+        <div class='btn-list'>
+          <el-button v-show='!editTeam&&!teamMap[item.cardId]' class='buy-btn' @click='sale(index)'>卖出</el-button>
+          <el-button v-show='editTeam&&(waitSelectIndex!=0||item.position==2&&waitSelectIndex==0)' class='select-btn' @click='choose(index)'>选择</el-button>
+          <img v-show='item.speed' src="../assets/img/info.png" class='info-btn hand' @click='showDetail(index)'>
+        </div>
+      </li>
+    </ul>
 
     <el-dialog
       :visible.sync="firstShow"
@@ -314,17 +310,17 @@ export default {
 .content {
   width: 100%;
   display: flex;
+  flex-direction: column;
   align-items: flex-start;
   background-color: rgba(0, 0, 0, 0.5);
   padding: 20px;
   .player-list {
     flex-grow: 0;
-    width: 50%;
+    width: 100%;
     flex-wrap: wrap;
     display: flex;
     li {
-      width: 260px;
-      height: 400px;
+      width: 200px;
       margin-right: 20px;
       text-align: center;
       background-color: #fff;
@@ -360,18 +356,23 @@ export default {
     }
   }
   .defense-box {
-    width: 50%;
-    border-left: 2px solid #fff;
+    width: 100%;
     min-height: 400px;
     display: flex;
-    align-items: center;
     flex-direction: column;
+    align-items: center;
     padding: 20px;
+    border-bottom: 2px solid #fff;
     .line {
       display: flex;
       width: 100%;
       justify-content: center;
       margin-bottom: 20px;
+    }
+    .line2 {
+      width: 100%;
+      display: flex;
+      align-items: center;
     }
     .item {
       display: flex;
@@ -379,7 +380,7 @@ export default {
       text-align: center;
       width: 200px;
       min-height: 350px;
-      margin-right: 40px;
+      margin-right: 20px;
       background-color: rgba(255, 255, 255, 0.5);
       border-radius: 10px;
       position: relative;

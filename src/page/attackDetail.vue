@@ -90,21 +90,43 @@ export default {
       address: this.$route.query.address,
       liveStr: "激烈角逐中",
       resultList: [],
-      winFlag: false
+      winFlag: false,
+      noPower: false,
     };
   },
   computed: {
     attackList() {
       const team = this.getItem("teamList");
-      const map = this.getItem('playerMap') || {}
+      const map = this.getItem("playerMap") || {};
       return team.map(cid => {
-        return map[cid]
+        return map[cid];
       });
     }
   },
   methods: {
+    async handlePowerTip() {
+      let power = await this.$simulateCall(0, "get_user_power", "");
+      power = +power;
+      if (isNaN(power)) power = "??";
+      this.$store.commit({
+        type: "update",
+        power
+      });
+      if (power <= 0) {
+        this.$message({
+          type: "error",
+          showClose: true,
+          duration: 0,
+          message: "您的体力值不足!"
+        });
+        this.noPower = true
+      }
+    },
     async challenge() {
-      this.resultList = []
+      this.handlePowerTip()
+      this.init();
+      this.initMe();
+      this.resultList = [];
       const self = this;
       let callArgs = `["${this.address}"]`;
       let result = null;
@@ -118,6 +140,7 @@ export default {
             "get_match_info",
             `["${match_id}"]`
           );
+          if(self.noPower) return
           if (result == "null" || !result) {
             getResult();
           } else {
@@ -177,7 +200,7 @@ export default {
         member_j["position"] = member_num[8];
         member_j["growth"] = member_num[9];
         member_j["avator"] = `${this.$preUrl}${member_j["avatorId"]}.jpg`;
-        this.handlePlayerStorage(member_j, 'attack') // 缓存球员头像
+        this.handlePlayerStorage(member_j, "attack"); // 缓存球员头像
         this.$set(this.defenseList, j, member_j);
       }
     },
@@ -202,16 +225,13 @@ export default {
         member_j["position"] = member_num[8];
         member_j["growth"] = member_num[9];
         member_j["avator"] = `${this.$preUrl}${member_j["avatorId"]}.jpg`;
-        this.handlePlayerStorage(member_j, 'attack') // 缓存球员头像
+        this.handlePlayerStorage(member_j, "attack"); // 缓存球员头像
         this.$set(this.attackList, j, member_j);
       }
     }
   },
   async created() {
-    this.init();
-    this.initMe();
-
-    this.challenge()
+    this.challenge();
   }
 };
 </script>

@@ -18,9 +18,7 @@
 
 <script>
 export default {
-  props: {
-    data : Object,
-  },
+  props: ['data'],
   components: {},
   data() {
     return {};
