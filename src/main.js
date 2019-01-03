@@ -7,7 +7,8 @@ import 'element-ui/lib/theme-chalk/index.css';
 import router from "./router"
 import filter from './filter'
 import myPublic from './assets/js/common.js'
-
+import TronWeb from 'tronweb'
+import contract from './Football.json'
 
 Vue.use(ElementUI)
 Vue.use(myPublic)
@@ -15,33 +16,39 @@ Vue.use(filter)
 
 Vue.prototype.$preUrl = 'https://sec-cdn.static.xiaomi.net/secStatic/groups/miui-sec/rentianfu/football/player_img/'
 
-const NebPay = _require('nebpay')
-Vue.prototype.$NebPay = new NebPay()
+const HttpProvider = TronWeb.providers.HttpProvider;
+const fullNode = new HttpProvider('https://api.shasta.trongrid.io'); // Full node http endpoint
+const solidityNode = new HttpProvider('https://api.shasta.trongrid.io'); // Solidity node http endpoint
+const eventServer = new HttpProvider('https://api.shasta.trongrid.io'); // Contract events http endpoint
 
+const privateKey = '9bc56c04b19d2f6cdc9d8ec9e0552ad9ded7a574daae89aa7512140be7133059';
 
-const addr = 'n1yiPEFvUBRuAmitbotASmWbXunF1NfGspH';
+Vue.prototype.$tronWeb = new TronWeb(
+  fullNode,
+  solidityNode,
+  eventServer,
+  privateKey
+)
 
+const addr = '41e6714c55c17acfea9f24d0240eb5a287587f17f1';
+
+// 合约地址
 Vue.prototype.$addr = addr
 
-Vue.prototype.$simulateCall = function(value, callFunction, callArgs) {
-  return new Promise(resolve => {
-    Vue.prototype.$NebPay.simulateCall(addr, value, callFunction, callArgs, {
-      listener: resp => {
-        resolve(resp.result)
-      },
-    });
-  })
+// 合约实例
+Vue.prototype.$football = async function(){
+  return await Vue.prototype.$tronWeb.contract(contract.abi,Vue.prototype.$addr)
 }
-
-Vue.prototype.$call = function(value, callFunction, callArgs) {
-  return new Promise(resolve => {
-    Vue.prototype.$NebPay.call(addr, value, callFunction, callArgs, {
-      listener: resp => {
-        resolve(resp.result)
-      },
-    });
-  })
-}
+//
+// Vue.prototype.$call = function(value, callFunction, callArgs) {
+//   return new Promise(resolve => {
+//     Vue.prototype.$NebPay.call(addr, value, callFunction, callArgs, {
+//       listener: resp => {
+//         resolve(resp.result)
+//       },
+//     });
+//   })
+// }
 
 Vue.use(Vuex)
 const store = new Vuex.Store({
@@ -82,75 +89,112 @@ router.beforeEach(async (to, from, next) => {
 
 async function init() {
   const self = Vue.prototype
-  Vue.prototype.$simulateCall(0, "user_login", "").then(data => {
-    data = JSON.parse(data);
-    if (data instanceof Object) {
-      const teamList = data.team ? data.team.split("_").filter(e => !!e) : []
-      store.commit({
-        type: 'update',
-        userName: data.user_name,
-        freeFlag: data.user_free != '1',
-        teamList,
-      })
-    } else {
-      store.commit({
-        type: 'update',
-        freeFlag: true,
-      })
-    }
+
+  // Vue.prototype.$simulateCall(0, "user_login", "").then(data => {
+  //   data = JSON.parse(data);
+  //   if (data instanceof Object) {
+  //     const teamList = data.team ? data.team.split("_").filter(e => !!e) : []
+  //     store.commit({
+  //       type: 'update',
+  //       userName: data.user_name,
+  //       freeFlag: data.user_free != '1',
+  //       teamList,
+  //     })
+  //   } else {
+  //     store.commit({
+  //       type: 'update',
+  //       freeFlag: true,
+  //     })
+  //   }
+  // })
+
+  let user_detail = await Vue.prototype.$football().user_login().call()
+
+
+  let last_time = user_detail[2].toNumber()
+  if (!last_time) {
+    await Vue.prototype.$football().user_register().send()
+    user_detail = await Vue.prototype.$football().user_login().call()
+  }
+  let user_address = user_detail[0].toString()
+  let team_detail = await Vue.prototype.$football().get_user_team(user_address).call()
+  let teamList = []
+  for (let i = 0;i<team_detail.length;i++){
+    teamList.push(team_detail[i].toString())
+  }
+
+
+  store.commit({
+    type: 'update',
+    teamList,
   })
-  Vue.prototype.$simulateCall(0, "get_user_power", "").then(power => {
-    power = +power
-    if(isNaN(power)) power = '??'
-    store.commit({
-      type: 'update',
-      power,
-    })
-  })
+
+
+  // Vue.prototype.$simulateCall(0, "get_user_power", "").then(power => {
+  //   power = +power
+  //   if(isNaN(power)) power = '??'
+  //   store.commit({
+  //     type: 'update',
+  //     power,
+  //   })
+  // })
 
   const { address } = store.state
   const commonPrice = self.getItem('commonPrice'),
         vipPrice = self.getItem('vipPrice'),
         powerPrice = self.getItem('powerPrice')
-  if(!address) self.$simulateCall(0, "get_address", "").then(data => {
-    data = JSON.parse(data)
+  // if(!address) self.$simulateCall(0, "get_address", "").then(data => {
+  //   data = JSON.parse(data)
+  //   store.commit({
+  //     type: 'update',
+  //     address: data,
+  //   })
+  // })
+  if (!address) {
     store.commit({
       type: 'update',
-      address: data,
+      address: user_address,
+      commonPrice: commonPrice,
+
     })
-  })
+  }
   if(!commonPrice) {
-    self.$simulateCall(0,"get_common_card_price","").then(data => {
+    //获取普通卡片价格
+    let data = (await self.$football().get_common_card_price().call()).toString()
     self.setItem('commonPrice',data)
     store.commit({
       type: 'update',
       commonPrice: data,
     })
-  }) } else {
+   } else {
     store.commit({
       type: 'update',
       commonPrice,
     })
   }
-  if(!vipPrice) { self.$simulateCall(0,"get_vip_card_price","").then(data => {
+  //获取vip卡价格
+  if(!vipPrice) {
+    let data = (await self.$football().get_vip_card_price().call()).toString()
     self.setItem('vipPrice',data)
     store.commit({
       type: 'update',
       vipPrice: data,
     })
-  }) } else {
+   } else {
     store.commit({
       type: 'update',
       vipPrice,
     })
   }
-  if(!powerPrice) { self.$simulateCall(0,"get_power_price","").then(data => {
+  //获取体力价格
+  if(!powerPrice) {
+    let data = (await self.$football().get_power_price().call()).toString()
     self.setItem('powerPrice',data)
     store.commit({
       type: 'update',
       powerPrice: data,
     })
-  }) } else {
+   } else {
     store.commit({
       type: 'update',
       powerPrice,

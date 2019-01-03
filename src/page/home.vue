@@ -159,8 +159,7 @@ export default {
         this.$message.warning('价格输入有误!')
         return
       }
-      const args = JSON.stringify([this.saleCardId, price])
-      const data = await this.$call(0, 'sale_my_card', args)
+      const data = await this.$football().sale_card(this.saleCardId,price).send()
       this.saleShow = false
       this.$message({
         showClose: true,
@@ -178,8 +177,7 @@ export default {
       this.saleShow = true;
     },
     async submitTeam() {
-      const args = JSON.stringify(this.teamList);
-      const data = await this.$call(0, "change_user_team", args);
+      const data = await this.$football().set_team(this.teamList).send();
       this.$message({
         showClose: true,
         duration: 0,
@@ -232,11 +230,7 @@ export default {
           shoot,
           defend,
           speed,
-          shoot_factor,
-          defend_factor,
-          speed_factor,
           position,
-          growth
         ] = data;
         const obj = {
           avatorId,
@@ -244,11 +238,7 @@ export default {
           shoot,
           defend,
           speed,
-          shoot_factor,
-          defend_factor,
-          speed_factor,
           position,
-          growth
         };
         obj.avator = `${this.$preUrl}${avatorId}.jpg`;
         obj.cardId = cardId; // 卡片id
@@ -286,12 +276,20 @@ export default {
       })
     },
   },
+  //获取用户信息，信息包括用户所拥有卡片，队伍信息
   async created() {
-    let list = await this.$simulateCall(0, "user_login", "");
-    list = JSON.parse(list);
+    let list = await this.$football().user_login().call();
+    let card_list = await this.$football().get_user_all_card().call();
+    let plist = [];
+    for (let i=0;i<card_list[1].toString();i++){
+      plist.push(card_list[0][i].toString())
+    }
+    let teamlist = await this.$football().get_user_team(list[0].toString()).call()
+
+
     if (list instanceof Object) {
       this.loading = false;
-      this.setItem('userName', list.user_name)
+      // this.setItem('userName', list.user_name)
       const plist = list.card_list.split("_").filter(e => !!e)
       const teamlist = list.team ? list.team.split("_").filter(e => !!e) : []
       this.loadList(plist)

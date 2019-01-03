@@ -23,6 +23,7 @@
 // import {login} from '../api'
 import Vue from "vue";
 import player from "../components/player";
+import get_player from "../data.js"
 
 export default {
   props: [],
@@ -43,10 +44,8 @@ export default {
   methods: {
     //buy function
     async buy(id, price) {
-      let value_buy = price;
-      let callFunction_buy = "get_sale_card";
-      let callArgs_buy = `["${id}"]`;
-      await this.$call(value_buy, callFunction_buy, callArgs_buy);
+      await this.$football().buy_card(id,price).send();
+
       this.$message({
         showClose: true,
         duration: 0,
@@ -66,40 +65,18 @@ export default {
           shoot: 0,
           defend: 0,
           speed: 0,
-          shoot_factor: 0,
-          defend_factor: 0,
-          speed_factor: 0,
           position: 0,
-          growth: 0,
           price: 0
         };
-        let detail = this.topList[j].split("~");
-        let num = detail[1].split(",");
-        players.player_id = detail[0].replace('"', "");
-        players.cardId = players.player_id
-        let [
-          avatorId,
-          player_name,
-          shoot,
-          defend,
-          speed,
-          shoot_factor,
-          defend_factor,
-          speed_factor,
-          position,
-          growth
-        ] = num;
-        players.avatorId = avatorId;
-        players.player_name = player_name;
-        players.shoot = shoot;
-        players.defend = defend;
-        players.speed = speed;
-        players.shoot_factor = shoot_factor;
-        players.defend_factor = defend_factor;
-        players.speed_factor = speed_factor;
-        players.position = position;
-        players.growth = growth;
-        players.price = detail[2].replace('"', "");
+        let detail = this.topList[j];
+        players.cardId = detail.cardId;
+        players.avatorId = detail.playerId;
+        players.player_name = detail.playerName;
+        players.shoot = detail.playerAttackValue;
+        players.defend = detail.playerDefendValue;
+        players.speed = detail.playerSpeedValue;
+        players.position = detail.playerPosition;
+        players.price = detail.price;
         players.avator = `${this.$preUrl}${players.avatorId}.jpg`;
         this.handlePlayerStorage(players, 'attack') // 缓存球员头像
         player_list.push(players);
@@ -108,13 +85,22 @@ export default {
       this.loading = false;
     },
   },
+  //获得市场上所有卡片信息，信息包括卡片id，球员id，球员姓名，攻击，防御，速度，位置，卡片价格
   async created() {
-    let value = 0;
-    let callFunction = "foreach_sale_card";
-    let callArgs = "";
-    let list = await this.$simulateCall(value, callFunction, callArgs);
+    let card_on_market = await this.$football().get_all_card_on_market().call();
+    let list = []
+    for (let i=0;i<card_on_market[1].toString();i++){
+      let card_id = card_on_market[0][i].toString();
+      let card_info = await this.$football().get_card_info(card_id).call();
+      let card_detail  = get_player(card_info[2].toString())
+      card_detail.cardId = card_id;
+      card_detail.price = card_info[5].toString()
+
+      list.push(card_detail)
+    }
+
     if (list.length > 10) {
-      this.topList = list.split("_");
+      this.topList = list;
       this.pageTotal = this.topList.length
     }
     this.init()
