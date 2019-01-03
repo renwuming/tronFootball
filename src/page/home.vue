@@ -74,8 +74,8 @@
       width="40%">
       <div class='dialog-text'>
         <p>您还没有球员哦~</p>
-        <p>点击左侧free按钮，免费抽取球员</p>
-        <p>然后才能开始游戏哦~</p>
+        <p>首次登陆，我们将送您5为球员，包括一名守门员</p>
+        <p>请刷新页面，享受FOC的乐趣！~</p>
       </div>
       <span slot="footer" class="dialog-footer">
         <p class='confirm-btn hand no-hover' @click="firstShow = false">确 定</p>
@@ -223,7 +223,6 @@ export default {
         );
         data = JSON.parse(data)
         if(!data) continue
-        data = data.split(",");
         let [
           avatorId,
           player_name,
@@ -282,16 +281,14 @@ export default {
     let card_list = await this.$football().get_user_all_card().call();
     let plist = [];
     for (let i=0;i<card_list[1].toString();i++){
-      plist.push(card_list[0][i].toString())
+        plist.push(card_list[0][i].toString())
     }
     let teamlist = await this.$football().get_user_team(list[0].toString()).call()
+    let last_time = list[2].toNumber()
 
-
-    if (list instanceof Object) {
+    if (!last_time) {
       this.loading = false;
       // this.setItem('userName', list.user_name)
-      const plist = list.card_list.split("_").filter(e => !!e)
-      const teamlist = list.team ? list.team.split("_").filter(e => !!e) : []
       this.loadList(plist)
       this.handlePList(plist);
       this.handleTeam(teamlist);
