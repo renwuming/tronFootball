@@ -21,7 +21,7 @@ const fullNode = new HttpProvider('https://api.shasta.trongrid.io'); // Full nod
 const solidityNode = new HttpProvider('https://api.shasta.trongrid.io'); // Solidity node http endpoint
 const eventServer = new HttpProvider('https://api.shasta.trongrid.io'); // Contract events http endpoint
 
-const privateKey = '9bc56c04b19d2f6cdc9d8ec9e0552ad9ded7a574daae89aa7512140be7133059';
+const privateKey = '';
 
 Vue.prototype.$tronWeb = new TronWeb(
   fullNode,
