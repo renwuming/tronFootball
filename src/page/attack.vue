@@ -201,8 +201,8 @@ export default {
   async mounted() {
     // this.handlePowerTip()
     // this.handleTeamTip()
-
-    let list = await this.$simulateCall(0, "foreach_rank_card", "");
+    // let list = await (await this.$football()).;
+    // let list = await this.$simulateCall(0, "foreach_rank_card", "");
     if (list.length > 10) {
       this.toplist = list.split("_");
     }

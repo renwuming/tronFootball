@@ -71,18 +71,20 @@ export default {
   methods: {
     async init() {
     },
-    async getFree() {
-      let data = await this.$call(0, "get_free_card", "");
-      this.$message({
-        showClose: true,
-        duration: 0,
-        message: "请在区块链交易成功后，刷新页面！"
-      });
-    },
+    // async getFree() {
+    //   let data = await (await this.$football()).
+    //   let data = await this.$call(0, "get_free_card", "");
+    //   this.$message({
+    //     showClose: true,
+    //     duration: 0,
+    //     message: "请在区块链交易成功后，刷新页面！"
+    //   });
+    // },
     async getCommon() {
       let value = this.getItem("commonPrice");
       let price = +value / 1000000000000000000;
-      let data = await this.$call(price, "get_common_card", "");
+      let data = await (await this.$football()).buy_common_card(price).send();
+      // let data = await this.$call(price, "get_common_card", "");
       this.$message({
         showClose: true,
         duration: 0,
@@ -92,7 +94,8 @@ export default {
     async getVIP() {
       let value = this.getItem("vipPrice");
       let price = +value / 1000000000000000000;
-      let data = await this.$call(price, "get_vip_card", "");
+      let data = await (await this.$football()).buy_vip_card(price).send();
+      // let data = await this.$call(price, "get_vip_card", "");
       this.$message({
         showClose: true,
         duration: 0,
@@ -102,21 +105,23 @@ export default {
     async getPower() {
       let value = this.getItem("powerPrice");
       let price = +value / 1000000000000000000;
-      let data = await this.$call(price, "get_power", "");
+      let data = await (await this.$football()).buy_power(price).send();
+      // let data = await this.$call(price, "get_power", "");
       this.$message({
         showClose: true,
         duration: 0,
         message: "请在区块链交易成功后，刷新页面！"
       });
     },
-    async getFreePower() {
-      let data = await this.$call(0, "get_free_power", "");
-      this.$message({
-        showClose: true,
-        duration: 0,
-        message: "请在区块链交易成功后，刷新页面！"
-      });
-    },
+    // async getFreePower() {
+    //
+    //   let data = await this.$call(0, "get_free_power", "");
+    //   this.$message({
+    //     showClose: true,
+    //     duration: 0,
+    //     message: "请在区块链交易成功后，刷新页面！"
+    //   });
+    // },
     handlePowerTip(power) {
       if (!isNaN(power) && power <= 0) {
         Vue.prototype.$message({

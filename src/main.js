@@ -30,7 +30,7 @@ Vue.prototype.$tronWeb = new TronWeb(
   privateKey
 )
 
-const addr = '41e6714c55c17acfea9f24d0240eb5a287587f17f1';
+const addr = '41fb44420358e0f02bd24d5bffec680537f25dbae2';
 
 // 合约地址
 Vue.prototype.$addr = addr
@@ -107,17 +107,16 @@ async function init() {
   //     })
   //   }
   // })
-
-  let user_detail = await Vue.prototype.$football().user_login().call()
-
+  let user_detail = await (await Vue.prototype.$football()).user_login().call()
+  console.log('user_detail: '+user_detail)
 
   let last_time = user_detail[2].toNumber()
   if (!last_time) {
-    await Vue.prototype.$football().user_register().send()
-    user_detail = await Vue.prototype.$football().user_login().call()
+    await (await Vue.prototype.$football()).user_register().send()
+    user_detail = await (await Vue.prototype.$football()).user_login().call()
   }
   let user_address = user_detail[0].toString()
-  let team_detail = await Vue.prototype.$football().get_user_team(user_address).call()
+  let team_detail = await (await Vue.prototype.$football()).get_user_team(user_address).call()
   let teamList = []
   for (let i = 0;i<team_detail.length;i++){
     teamList.push(team_detail[i].toString())
@@ -160,7 +159,7 @@ async function init() {
   }
   if(!commonPrice) {
     //获取普通卡片价格
-    let data = (await self.$football().get_common_card_price().call()).toString()
+    let data = (await (await self.$football()).get_common_card_price().call()).toString()
     self.setItem('commonPrice',data)
     store.commit({
       type: 'update',
@@ -174,7 +173,7 @@ async function init() {
   }
   //获取vip卡价格
   if(!vipPrice) {
-    let data = (await self.$football().get_vip_card_price().call()).toString()
+    let data = (await (await self.$football()).get_vip_card_price().call()).toString()
     self.setItem('vipPrice',data)
     store.commit({
       type: 'update',
@@ -188,7 +187,7 @@ async function init() {
   }
   //获取体力价格
   if(!powerPrice) {
-    let data = (await self.$football().get_power_price().call()).toString()
+    let data = (await (await self.$football()).get_power_price().call()).toString()
     self.setItem('powerPrice',data)
     store.commit({
       type: 'update',

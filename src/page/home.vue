@@ -277,13 +277,13 @@ export default {
   },
   //获取用户信息，信息包括用户所拥有卡片，队伍信息
   async created() {
-    let list = await this.$football().user_login().call();
-    let card_list = await this.$football().get_user_all_card().call();
+    let list = await (await this.$football()).user_login().call();
+    let card_list = await (await this.$football()).get_user_all_card().call();
     let plist = [];
     for (let i=0;i<card_list[1].toString();i++){
         plist.push(card_list[0][i].toString())
     }
-    let teamlist = await this.$football().get_user_team(list[0].toString()).call()
+    let teamlist = await (await this.$football()).get_user_team(list[0].toString()).call()
     let last_time = list[2].toNumber()
 
     if (!last_time) {

@@ -44,7 +44,7 @@ export default {
   methods: {
     //buy function
     async buy(id, price) {
-      await this.$football().buy_card(id,price).send();
+      await (await this.$football()).buy_card(id,price).send();
 
       this.$message({
         showClose: true,
@@ -87,11 +87,11 @@ export default {
   },
   //获得市场上所有卡片信息，信息包括卡片id，球员id，球员姓名，攻击，防御，速度，位置，卡片价格
   async created() {
-    let card_on_market = await this.$football().get_all_card_on_market().call();
+    let card_on_market = await (await this.$football()).get_all_card_on_market().call();
     let list = []
     for (let i=0;i<card_on_market[1].toString();i++){
       let card_id = card_on_market[0][i].toString();
-      let card_info = await this.$football().get_card_info(card_id).call();
+      let card_info = await (await this.$football()).get_card_info(card_id).call();
       let card_detail  = get_player(card_info[2].toString())
       card_detail.cardId = card_id;
       card_detail.price = card_info[5].toString()
