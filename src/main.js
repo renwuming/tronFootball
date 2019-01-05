@@ -21,13 +21,16 @@ const fullNode = new HttpProvider('https://api.shasta.trongrid.io'); // Full nod
 const solidityNode = new HttpProvider('https://api.shasta.trongrid.io'); // Solidity node http endpoint
 const eventServer = new HttpProvider('https://api.shasta.trongrid.io'); // Contract events http endpoint
 
-const privateKey = '';
+import config from './config'
+import getPlayer from './data'
+
+Vue.prototype.$getPlayer = getPlayer
 
 Vue.prototype.$tronWeb = new TronWeb(
   fullNode,
   solidityNode,
   eventServer,
-  privateKey
+  config.privateKey
 )
 
 const addr = '41fb44420358e0f02bd24d5bffec680537f25dbae2';
@@ -36,8 +39,9 @@ const addr = '41fb44420358e0f02bd24d5bffec680537f25dbae2';
 Vue.prototype.$addr = addr
 
 // 合约实例
-Vue.prototype.$football = async function(){
-  return await Vue.prototype.$tronWeb.contract(contract.abi,Vue.prototype.$addr)
+Vue.prototype.$football = async function () {
+  let res = await await Vue.prototype.$tronWeb.contract(contract.abi, Vue.prototype.$addr)
+  return res
 }
 //
 // Vue.prototype.$call = function(value, callFunction, callArgs) {
@@ -65,15 +69,15 @@ const store = new Vuex.Store({
   },
   mutations: {
     update(state, payload) {
-      if(payload.power||payload.power==0) state.power = payload.power
-      if(payload.userName) state.userName = payload.userName
-      if(payload.commonPrice) state.commonPrice = payload.commonPrice
-      if(payload.vipPrice) state.vipPrice = payload.vipPrice
-      if(payload.powerPrice) state.powerPrice = payload.powerPrice
-      if(payload.currentRouter) state.currentRouter = payload.currentRouter
-      if(payload.freeFlag) state.freeFlag = payload.freeFlag
-      if(payload.address) state.address = payload.address
-      if(payload.teamList) state.teamList = payload.teamList
+      if (payload.power || payload.power == 0) state.power = payload.power
+      if (payload.userName) state.userName = payload.userName
+      if (payload.commonPrice) state.commonPrice = payload.commonPrice
+      if (payload.vipPrice) state.vipPrice = payload.vipPrice
+      if (payload.powerPrice) state.powerPrice = payload.powerPrice
+      if (payload.currentRouter) state.currentRouter = payload.currentRouter
+      if (payload.freeFlag) state.freeFlag = payload.freeFlag
+      if (payload.address) state.address = payload.address
+      if (payload.teamList) state.teamList = payload.teamList
     },
   }
 })
@@ -108,7 +112,7 @@ async function init() {
   //   }
   // })
   let user_detail = await (await Vue.prototype.$football()).user_login().call()
-  console.log('user_detail: '+user_detail)
+  console.log('user_detail: ' + user_detail)
 
   let last_time = user_detail[2].toNumber()
   if (!last_time) {
@@ -118,7 +122,7 @@ async function init() {
   let user_address = user_detail[0].toString()
   let team_detail = await (await Vue.prototype.$football()).get_user_team(user_address).call()
   let teamList = []
-  for (let i = 0;i<team_detail.length;i++){
+  for (let i = 0; i < team_detail.length; i++) {
     teamList.push(team_detail[i].toString())
   }
 
@@ -128,72 +132,63 @@ async function init() {
     teamList,
   })
 
-
-  // Vue.prototype.$simulateCall(0, "get_user_power", "").then(power => {
-  //   power = +power
-  //   if(isNaN(power)) power = '??'
-  //   store.commit({
-  //     type: 'update',
-  //     power,
-  //   })
-  // })
+  store.commit({
+    type: 'update',
+    power: user_detail[3].toNumber(),
+  })
+  store.commit({
+    type: 'update',
+    address: user_address,
+  })
 
   const { address } = store.state
   const commonPrice = self.getItem('commonPrice'),
-        vipPrice = self.getItem('vipPrice'),
-        powerPrice = self.getItem('powerPrice')
-  // if(!address) self.$simulateCall(0, "get_address", "").then(data => {
-  //   data = JSON.parse(data)
-  //   store.commit({
-  //     type: 'update',
-  //     address: data,
-  //   })
-  // })
+    vipPrice = self.getItem('vipPrice'),
+    powerPrice = self.getItem('powerPrice')
   if (!address) {
     store.commit({
       type: 'update',
       address: user_address,
       commonPrice: commonPrice,
-
     })
   }
-  if(!commonPrice) {
+  if (!commonPrice) {
     //获取普通卡片价格
     let data = (await (await self.$football()).get_common_card_price().call()).toString()
-    self.setItem('commonPrice',data)
+    self.setItem('commonPrice', data)
     store.commit({
       type: 'update',
       commonPrice: data,
     })
-   } else {
+  } else {
     store.commit({
       type: 'update',
       commonPrice,
     })
   }
   //获取vip卡价格
-  if(!vipPrice) {
+  if (!vipPrice) {
     let data = (await (await self.$football()).get_vip_card_price().call()).toString()
-    self.setItem('vipPrice',data)
+    self.setItem('vipPrice', data)
     store.commit({
       type: 'update',
       vipPrice: data,
     })
-   } else {
+  } else {
     store.commit({
       type: 'update',
       vipPrice,
     })
   }
   //获取体力价格
-  if(!powerPrice) {
+  if (!powerPrice) {
     let data = (await (await self.$football()).get_power_price().call()).toString()
-    self.setItem('powerPrice',data)
+    self.setItem('powerPrice', data)
     store.commit({
       type: 'update',
       powerPrice: data,
     })
-   } else {
+  } else {
     store.commit({
       type: 'update',
       powerPrice,

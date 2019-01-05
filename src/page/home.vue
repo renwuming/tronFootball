@@ -1,108 +1,116 @@
 <template>
-  <div class="content"
-    v-loading='loading'
-  >
+  <div class="content" v-loading="loading">
     <div class="defense-box">
       <div class="line2">
-        <div v-show='teamList[0]' class="item">
-          <div class='player-box'>
-            <player :data='teamPList[0]'></player>
+        <div v-show="teamList[0]" class="item">
+          <div class="player-box">
+            <player :data="teamPList[0]"></player>
           </div>
-          <div class="bottom-btn hand unselect" @click='unselect(0)'>替换守门员</div>
+          <div class="bottom-btn hand unselect" @click="unselect(0)">替换守门员</div>
         </div>
-        <div v-show='!teamList[0]' class='item' :class='{selecting: waitSelectIndex==0}'>
+        <div v-show="!teamList[0]" class="item" :class="{selecting: waitSelectIndex==0}">
           <i class="fa fa-question-circle" aria-hidden="true"></i>
-          <div class="bottom-btn hand" @click='select(0)'>选择守门员</div>
+          <div class="bottom-btn hand" @click="select(0)">选择守门员</div>
         </div>
-        <div v-show='teamList[1]' class="item">
-          <div class='player-box'>
-            <player :data='teamPList[1]'></player>
+        <div v-show="teamList[1]" class="item">
+          <div class="player-box">
+            <player :data="teamPList[1]"></player>
           </div>
-          <div class="bottom-btn hand unselect" @click='unselect(1)'>替换球员</div>
+          <div class="bottom-btn hand unselect" @click="unselect(1)">替换球员</div>
         </div>
-        <div v-show='!teamList[1]' class='item' :class='{selecting: waitSelectIndex==1}'>
+        <div v-show="!teamList[1]" class="item" :class="{selecting: waitSelectIndex==1}">
           <i class="fa fa-question-circle" aria-hidden="true"></i>
-          <div class="bottom-btn hand" @click='select(1)'>选择球员</div>
+          <div class="bottom-btn hand" @click="select(1)">选择球员</div>
         </div>
-        <div v-show='teamList[2]' class="item">
-          <div class='player-box'>
-            <player :data='teamPList[2]'></player>
+        <div v-show="teamList[2]" class="item">
+          <div class="player-box">
+            <player :data="teamPList[2]"></player>
           </div>
-          <div class="bottom-btn hand unselect" @click='unselect(2)'>替换球员</div>
+          <div class="bottom-btn hand unselect" @click="unselect(2)">替换球员</div>
         </div>
-        <div v-show='!teamList[2]' class='item' :class='{selecting: waitSelectIndex==2}'>
+        <div v-show="!teamList[2]" class="item" :class="{selecting: waitSelectIndex==2}">
           <i class="fa fa-question-circle" aria-hidden="true"></i>
-          <div class="bottom-btn hand" @click='select(2)'>选择球员</div>
+          <div class="bottom-btn hand" @click="select(2)">选择球员</div>
         </div>
-        <div v-show='teamList[3]' class="item">
-          <div class='player-box'>
-            <player :data='teamPList[3]'></player>
+        <div v-show="teamList[3]" class="item">
+          <div class="player-box">
+            <player :data="teamPList[3]"></player>
           </div>
-          <div class="bottom-btn hand unselect" @click='unselect(3)'>替换球员</div>
+          <div class="bottom-btn hand unselect" @click="unselect(3)">替换球员</div>
         </div>
-        <div v-show='!teamList[3]' class='item' :class='{selecting: waitSelectIndex==3}'>
+        <div v-show="!teamList[3]" class="item" :class="{selecting: waitSelectIndex==3}">
           <i class="fa fa-question-circle" aria-hidden="true"></i>
-          <div class="bottom-btn hand" @click='select(3)'>选择球员</div>
+          <div class="bottom-btn hand" @click="select(3)">选择球员</div>
         </div>
-        <div v-show='teamList[4]' class="item">
-          <div class='player-box'>
-            <player :data='teamPList[4]'></player>
+        <div v-show="teamList[4]" class="item">
+          <div class="player-box">
+            <player :data="teamPList[4]"></player>
           </div>
-          <div class="bottom-btn hand unselect" @click='unselect(4)'>替换球员</div>
+          <div class="bottom-btn hand unselect" @click="unselect(4)">替换球员</div>
         </div>
-        <div v-show='!teamList[4]' class='item' :class='{selecting: waitSelectIndex==4}'>
+        <div v-show="!teamList[4]" class="item" :class="{selecting: waitSelectIndex==4}">
           <i class="fa fa-question-circle" aria-hidden="true"></i>
-          <div class="bottom-btn hand" @click='select(4)'>选择球员</div>
+          <div class="bottom-btn hand" @click="select(4)">选择球员</div>
         </div>
       </div>
-      <el-button class='defense-confirm-btn' :disabled="!teamValid" @click='submitTeam'>提交队伍</el-button>
+      <el-button class="defense-confirm-btn" :disabled="!teamValid" @click="submitTeam">提交队伍</el-button>
     </div>
-    <ul class='player-list'>
-      <li v-for='(item,index) in playerList' :key='item.cardId'>
-        <player :data='item'></player>
-        <div class='btn-list'>
-          <el-button v-show='!editTeam&&!teamMap[item.cardId]' class='buy-btn' @click='sale(index)'>卖出</el-button>
-          <el-button v-show='editTeam&&(waitSelectIndex!=0||item.position==2&&waitSelectIndex==0)' class='select-btn' @click='choose(index)'>选择</el-button>
-          <img v-show='item.speed' src="../assets/img/info.png" class='info-btn hand' @click='showDetail(index)'>
+    <ul class="player-list">
+      <li v-for="(item,index) in playerList" :key="item.cardId" v-show="!item.onMarket">
+        <player :data="item"></player>
+        <div class="btn-list">
+          <el-button
+            v-show="!editTeam&&!teamMap[item.cardId]"
+            class="buy-btn"
+            @click="sale(index)"
+          >卖出</el-button>
+          <el-button
+            v-show="editTeam&&(waitSelectIndex!=0||item.position==2&&waitSelectIndex==0)"
+            class="select-btn"
+            @click="choose(index)"
+          >选择</el-button>
+          <img
+            v-show="item.speed"
+            src="../assets/img/info.png"
+            class="info-btn hand"
+            @click="showDetail(index)"
+          >
         </div>
       </li>
     </ul>
 
-    <el-dialog
-      :visible.sync="firstShow"
-      :show-close="false"
-      width="40%">
-      <div class='dialog-text'>
+    <el-dialog :visible.sync="firstShow" :show-close="false" width="40%">
+      <div class="dialog-text">
         <p>您还没有球员哦~</p>
         <p>首次登陆，我们将送您5为球员，包括一名守门员</p>
         <p>请刷新页面，享受FOC的乐趣！~</p>
       </div>
       <span slot="footer" class="dialog-footer">
-        <p class='confirm-btn hand no-hover' @click="firstShow = false">确 定</p>
+        <p class="confirm-btn hand no-hover" @click="firstShow = false">确 定</p>
       </span>
     </el-dialog>
-
 
     <el-dialog
       :visible.sync="detailShow"
       :show-close="false"
-      :lock-scroll='false'
-      class='detail-dialog'
-      width="80%">
-      <detail :data='detailPlayer'></detail>
+      :lock-scroll="false"
+      class="detail-dialog"
+      width="80%"
+    >
+      <detail :data="detailPlayer"></detail>
       <span slot="footer" class="dialog-footer">
-        <p class='confirm-btn hand no-hover' @click="detailShow = false">确 定</p>
+        <p class="confirm-btn hand no-hover" @click="detailShow = false">确 定</p>
       </span>
     </el-dialog>
-
 
     <el-dialog
       :visible.sync="saleShow"
       :show-close="false"
-      :lock-scroll='false'
-      title='出价'
-      width="40%">
-      <el-input v-model='price'></el-input>
+      :lock-scroll="false"
+      title="出价"
+      width="40%"
+    >
+      <el-input v-model="price"></el-input>
       <span slot="footer" class="dialog-footer">
         <el-button @click="cancelSale">取 消</el-button>
         <el-button @click="confirmSale">确 定</el-button>
@@ -133,8 +141,8 @@ export default {
       loading: true,
       saleCardId: null,
       saleShow: false,
-      price: '',
-      teamMap: {},
+      price: "",
+      teamMap: {}
     };
   },
   computed: {
@@ -150,38 +158,41 @@ export default {
   },
   methods: {
     cancelSale() {
-      this.saleShow = false
-      this.price = ''
+      this.saleShow = false;
+      this.price = "";
     },
     async confirmSale() {
-      const price = +this.price
-      if(isNaN(price)||!price) {
-        this.$message.warning('价格输入有误!')
-        return
+      const INT = 100*10000
+      const price = +this.price;
+      if (isNaN(price) || !price) {
+        this.$message.warning("价格输入有误!");
+        return;
       }
-      const data = await this.$football().sale_card(this.saleCardId,price).send()
-      this.saleShow = false
+      let fb = await this.$football();
+      const data = await fb.sale_card(this.saleCardId, price*INT).send();
+      this.saleShow = false;
       this.$message({
         showClose: true,
         duration: 0,
-        message: '请在区块链交易成功后，刷新页面！'
+        message: "请在区块链交易成功后，刷新页面！"
       });
     },
     sale(index) {
       const cardId = this.playerList[index].cardId;
-      if(this.teamMap[cardId]) {
-        this.$message.warning('队伍中的球员无法卖出!')
-        return
+      if (this.teamMap[cardId]) {
+        this.$message.warning("队伍中的球员无法卖出!");
+        return;
       }
       this.saleCardId = cardId;
       this.saleShow = true;
     },
     async submitTeam() {
-      const data = await this.$football().set_team(this.teamList).send();
+      let fb = await this.$football();
+      const data = await fb.set_team(this.teamList).send();
       this.$message({
         showClose: true,
         duration: 0,
-        message: '请在区块链交易成功后，刷新页面！'
+        message: "请在区块链交易成功后，刷新页面！"
       });
     },
     choose(index) {
@@ -213,48 +224,40 @@ export default {
       this.detailShow = true;
     },
     async handlePList(list) {
+      let fb = await this.$football();
       const resList = [];
       for (let i = 0; i < list.length; i++) {
         const cardId = list[i];
-        let data = await this.$simulateCall(
-          0,
-          "get_card_id",
-          `[${JSON.stringify(cardId)}]`
-        );
-        data = JSON.parse(data)
-        if(!data) continue
-        let [
-          avatorId,
-          player_name,
-          shoot,
-          defend,
-          speed,
-          position,
-        ] = data;
+        let data = await fb.get_card_info(cardId).call();
+        if (!data) continue;
+        let [card_id, ownerId, playerId, level, onMarket, price] = data;
+        const pdata = this.$getPlayer(playerId);
         const obj = {
-          avatorId,
-          player_name,
-          shoot,
-          defend,
-          speed,
-          position,
+          cardId,
+          avatorId: +playerId,
+          player_name: pdata.playerName,
+          shoot: pdata.playerAttackValue,
+          defend: pdata.playerDefendValue,
+          speed: pdata.playerSpeedValue,
+          position: pdata.playerPosition,
+          level,
+          onMarket
         };
-        obj.avator = `${this.$preUrl}${avatorId}.jpg`;
-        obj.cardId = cardId; // 卡片id
-        this.$set(this.playerList,i,obj)
-        this.handlePlayerStorage(obj, 'attack') // 缓存球员头像
+        obj.avator = `${this.$preUrl}${obj.avatorId}.jpg`;
+        this.$set(this.playerList, i, obj);
+        this.handlePlayerStorage(obj, "attack"); // 缓存球员头像
       }
     },
     handleTeam(list) {
-      this.teamList = list;
+      this.teamList = list.map(e => +e);
       // teamMap
-      const obj = {}
+      const obj = {};
       for (let i = 0; i < this.teamList.length; i++) {
         const cid = this.teamList[i];
-        obj[cid] = true
+        obj[cid] = true;
       }
-      this.teamMap = obj
-      this.setItem('teamList', this.teamList)
+      this.teamMap = obj;
+      this.setItem("teamList", this.teamList);
     },
     getPlayerByCardId(cardId) {
       for (let i = 0; i < this.playerList.length; i++) {
@@ -264,39 +267,49 @@ export default {
       return null;
     },
     loadList(plist) {
-      const map = this.getItem('playerMap') || {}
+      const map = this.getItem("playerMap") || {};
       this.playerList = plist.map(cardId => {
-        const data = map[cardId] || {}
+        const data = map[cardId] || {};
         return {
           cardId,
           avatorId: data.avatorId,
           player_name: data.player_name,
-        }
-      })
-    },
+          onMarket: true,
+        };
+      });
+    }
   },
   //获取用户信息，信息包括用户所拥有卡片，队伍信息
   async created() {
-    let list = await (await this.$football()).user_login().call();
-    let card_list = await (await this.$football()).get_user_all_card().call();
-    let plist = [];
-    for (let i=0;i<card_list[1].toString();i++){
-        plist.push(card_list[0][i].toString())
+    let fb = await this.$football();
+    try {
+      let list = await fb.user_login().call();
+      let card_list = await fb.get_user_all_card().call();
+      let plist = [];
+      for (let i = 0; i < card_list[1].toString(); i++) {
+        plist.push(card_list[0][i].toString());
+      }
+      let teamlist = await fb.get_user_team(list[0].toString()).call();
+      let last_time = list[2].toNumber();
+      let power = list[3].toNumber();
+      console.log(power);
+      this.$store.commit({
+        // 更新体力值
+        type: "update",
+        power,
+      });
+      if (last_time) {
+        this.loading = false;
+        this.loadList(plist);
+        this.handlePList(plist);
+        this.handleTeam(teamlist);
+      } else {
+        this.firstShow = true;
+        this.loading = false;
+      }
+    } catch (e) {
+      console.log(e.toString());
     }
-    let teamlist = await (await this.$football()).get_user_team(list[0].toString()).call()
-    let last_time = list[2].toNumber()
-
-    if (!last_time) {
-      this.loading = false;
-      // this.setItem('userName', list.user_name)
-      this.loadList(plist)
-      this.handlePList(plist);
-      this.handleTeam(teamlist);
-    } else {
-      this.firstShow = true
-      this.loading = false;
-    }
-
   }
 };
 </script>
@@ -340,6 +353,7 @@ export default {
       .btn-list {
         position: relative;
         text-align: center;
+        min-height: 30px;
         .info-btn {
           position: absolute;
           right: 0;

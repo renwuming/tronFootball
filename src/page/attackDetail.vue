@@ -1,76 +1,90 @@
 <template>
-  <div class='content'>
+  <div class="content">
     <div class="battle-box">
       <div class="line left">
         <div class="item">
-          <div class='player-box'>
+          <div class="player-box">
             <player :data="defenseList[0]"></player>
           </div>
         </div>
         <div class="item">
-          <div class='player-box'>
+          <div class="player-box">
             <player :data="defenseList[1]"></player>
           </div>
         </div>
       </div>
       <div class="line left">
         <div class="item">
-          <div class='player-box'>
+          <div class="player-box">
             <player :data="defenseList[2]"></player>
           </div>
         </div>
         <div class="item">
-          <div class='player-box'>
+          <div class="player-box">
             <player :data="defenseList[3]"></player>
           </div>
         </div>
       </div>
       <div class="line">
         <div class="item">
-          <div class='player-box'>
+          <div class="player-box">
             <player :data="defenseList[4]"></player>
           </div>
         </div>
         <i class="mid-icon fa fa-futbol-o" aria-hidden="true"></i>
         <div class="item me">
-          <div class='player-box'>
+          <div class="player-box">
             <player :data="attackList[4]"></player>
           </div>
         </div>
       </div>
       <div class="line right">
         <div class="item me">
-          <div class='player-box'>
+          <div class="player-box">
             <player :data="attackList[3]"></player>
           </div>
         </div>
         <div class="item me">
-          <div class='player-box'>
+          <div class="player-box">
             <player :data="attackList[2]"></player>
           </div>
         </div>
       </div>
       <div class="line right">
         <div class="item me">
-          <div class='player-box'>
+          <div class="player-box">
             <player :data="attackList[1]"></player>
           </div>
         </div>
         <div class="item me">
-          <div class='player-box'>
+          <div class="player-box">
             <player :data="attackList[0]"></player>
           </div>
         </div>
       </div>
     </div>
     <div class="live-box">
-      <div v-show='resultList.length<1' class="text-live">{{liveStr}}<i class="fa fa-spinner fa-pulse fa-3x fa-fw" style='margin-top:30px;font-size:36px;'></i></div>
-      <div v-show='resultList.length>1' class="text-live">
-        <p style='font-size:80px;width:100%;display:flex;justify-content:center;'><span style='width:160px;text-align:center;'>{{resultList[0]}}</span><span style='display:inline-block;width:40px;text-align:center;'>:</span><span style='width:160px;text-align:center;'>{{resultList[1]}}</span></p>
-        <p style='font-size:20px;width:100%;display:flex;justify-content:center;'><span style='width:160px;text-align:center;'>我方</span><span style='display:inline-block;width:40px;text-align:center;'></span><span style='width:160px;text-align:center;'>敌方</span></p>
-        <p v-show='winFlag' class='win-box'>获胜!</p>
-        <p v-show='!winFlag' class='lose-box'>失败</p>
-        <p class="bottom-btn hand" @click='challenge'>再次挑战</p>
+      <div v-show="resultList.length<1" class="text-live">
+        {{liveStr}}
+        <i
+          class="fa fa-spinner fa-pulse fa-3x fa-fw"
+          style="margin-top:30px;font-size:36px;"
+        ></i>
+      </div>
+      <div v-show="resultList.length>1" class="text-live">
+        <p style="font-size:80px;width:100%;display:flex;justify-content:center;">
+          <span style="width:160px;text-align:center;">{{resultList[0]}}</span>
+          <span style="display:inline-block;width:40px;text-align:center;">:</span>
+          <span style="width:160px;text-align:center;">{{resultList[1]}}</span>
+        </p>
+        <p style="font-size:20px;width:100%;display:flex;justify-content:center;">
+          <span style="width:160px;text-align:center;">我方</span>
+          <span style="display:inline-block;width:40px;text-align:center;"></span>
+          <span style="width:160px;text-align:center;">敌方</span>
+        </p>
+        <p v-show="winFlag" class="win-box">获胜!</p>
+        <p v-show="!winFlag" class="lose-box">失败</p>
+        <p class="bottom-btn hand" @click="challenge">再次挑战</p>
       </div>
     </div>
   </div>
@@ -79,6 +93,7 @@
 <script>
 import player from "../components/miniPlayer";
 import handleStr from "./handleStr";
+import team_vs from "../util";
 
 export default {
   components: {
@@ -92,21 +107,15 @@ export default {
       resultList: [],
       winFlag: false,
       noPower: false,
+      attackList: []
     };
   },
-  computed: {
-    attackList() {
-      const team = this.getItem("teamList");
-      const map = this.getItem("playerMap") || {};
-      return team.map(cid => {
-        return map[cid];
-      });
-    }
-  },
+  computed: {},
   methods: {
     async handlePowerTip() {
-      let power = await this.$simulateCall(0, "get_user_power", "");
-      power = +power;
+      let fb = await this.$football();
+      let user = await fb.user_login().call();
+      let power = user[3].toNumber();
       if (isNaN(power)) power = "??";
       this.$store.commit({
         type: "update",
@@ -119,58 +128,23 @@ export default {
           duration: 0,
           message: "您的体力值不足!"
         });
-        this.noPower = true
+        this.noPower = true;
       }
     },
     async challenge() {
-      this.handlePowerTip()
-      this.init();
-      this.initMe();
       this.resultList = [];
-      const self = this;
-      let callArgs = `["${this.address}"]`;
-      let result = null;
-      let match_id = await this.$simulateCall(0, "get_matchMap_cnt", "");
-      await this.$call(0, "team_vs", callArgs);
+      let fb = await this.$football();
+      this.handlePowerTip();
+      await this.init();
+      await this.initMe();
 
-      function getResult() {
-        setTimeout(async () => {
-          result = await self.$simulateCall(
-            0,
-            "get_match_info",
-            `["${match_id}"]`
-          );
-          if(self.noPower) return
-          if (result == "null" || !result) {
-            getResult();
-          } else {
-            let resultback = result.split("_");
-
-            let [addr1, addr2, myScore, enemyScore, grow] = resultback;
-            grow = parseFloat(grow);
-            self.resultList = [myScore, enemyScore];
-            if (+grow > 0) {
-              self.winFlag = true;
-              self.$message({
-                type: "success",
-                showClose: true,
-                duration: 0,
-                message: "挑战成功! 球员属性获得了提升!"
-              });
-            } else {
-              self.winFlag = false;
-              self.$message({
-                type: "error",
-                showClose: true,
-                duration: 0,
-                message: "挑战失败!"
-              });
-            }
-          }
-        }, 500);
+      var res = team_vs(this.attackList, this.defenseList);
+      this.resultList = [res[0], res[1]];
+      this.winFlag = res[0] > res[1] ? true : false;
+      for (var i = 0; i < 5; i++) {
+        await fb.add_level(this.attackList[i], res[2]);
+        await fb.add_level(this.defenseList[i], res[3]);
       }
-
-      getResult();
     },
     getPlayerByCardId(cardId, playerList) {
       for (let i = 0; i < playerList.length; i++) {
@@ -180,57 +154,63 @@ export default {
       return null;
     },
     async init() {
+      let fb = await this.$football();
       const team = this.defenseList;
       for (let j = 0; j < team.length; j++) {
-        let member_j = {};
         const cardId = team[j].cardId;
-        let callArgs_m = `["${cardId}"]`;
-        let member = await this.$simulateCall(0, "get_card_id", callArgs_m);
+        var card_info = await fb.get_card_info(cardId).call();
+        var player = this.$getPlayer(card_info[2]);
+        var card = {
+          cardId: card_info[0],
+          cardOwner: card_info[1],
+          avatorId: card_info[2],
+          level: card_info[3],
+          onMarket: card_info[4],
+          player_name: player.playerName,
+          shoot: player.playerAttackValue,
+          defend: player.playerDefendValue,
+          speed: player.playerSpeedValue,
+          position: player.playerPosition
+        };
         if (this.pageChange != this.initDetailCount) return; // init次数与翻页次数不同，则退出
-        let member_num = member.replace(/\"/g, "").split(",");
-        member_j["cardId"] = cardId;
-        member_j["avatorId"] = member_num[0];
-        member_j["player_name"] = member_num[1];
-        member_j["shoot"] = member_num[2];
-        member_j["defend"] = member_num[3];
-        member_j["speed"] = member_num[4];
-        member_j["shoot_factor"] = member_num[5];
-        member_j["defend_factor"] = member_num[6];
-        member_j["speed_factor"] = member_num[7];
-        member_j["position"] = member_num[8];
-        member_j["growth"] = member_num[9];
-        member_j["avator"] = `${this.$preUrl}${member_j["avatorId"]}.jpg`;
-        this.handlePlayerStorage(member_j, "attack"); // 缓存球员头像
-        this.$set(this.defenseList, j, member_j);
+        card["avator"] = `${this.$preUrl}${card["avatorId"]}.jpg`;
+        this.handlePlayerStorage(card, "attack"); // 缓存球员头像
+        this.$set(this.defenseList, j, card);
       }
     },
     async initMe() {
+      let fb = await this.$football();
       const team = this.attackList;
       for (let j = 0; j < team.length; j++) {
-        let member_j = {};
         const cardId = team[j].cardId;
-        let callArgs_m = `["${cardId}"]`;
-        let member = await this.$simulateCall(0, "get_card_id", callArgs_m);
+        var card_info = await fb.get_card_info(cardId).call();
+        var player = this.$getPlayer(card_info[2]);
+        var card = {
+          cardId: card_info[0],
+          cardOwner: card_info[1],
+          avatorId: card_info[2],
+          level: card_info[3],
+          onMarket: card_info[4],
+          player_name: player.playerName,
+          shoot: player.playerAttackValue,
+          defend: player.playerDefendValue,
+          speed: player.playerSpeedValue,
+          position: player.playerPosition
+        };
         if (this.pageChange != this.initDetailCount) return; // init次数与翻页次数不同，则退出
-        let member_num = member.replace(/\"/g, "").split(",");
-        member_j["cardId"] = cardId;
-        member_j["avatorId"] = member_num[0];
-        member_j["player_name"] = member_num[1];
-        member_j["shoot"] = member_num[2];
-        member_j["defend"] = member_num[3];
-        member_j["speed"] = member_num[4];
-        member_j["shoot_factor"] = member_num[5];
-        member_j["defend_factor"] = member_num[6];
-        member_j["speed_factor"] = member_num[7];
-        member_j["position"] = member_num[8];
-        member_j["growth"] = member_num[9];
-        member_j["avator"] = `${this.$preUrl}${member_j["avatorId"]}.jpg`;
-        this.handlePlayerStorage(member_j, "attack"); // 缓存球员头像
-        this.$set(this.attackList, j, member_j);
+        card["avator"] = `${this.$preUrl}${card["avatorId"]}.jpg`;
+        this.handlePlayerStorage(card, "attack"); // 缓存球员头像
+        this.$set(this.attackList, j, card);
       }
+      console.log(this.attackList);
     }
   },
   async created() {
+    const team = this.getItem("teamList");
+    const map = this.getItem("playerMap") || {};
+    this.attackList = team.map(cid => {
+      return map[cid];
+    });
     this.challenge();
   }
 };

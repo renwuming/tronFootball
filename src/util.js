@@ -1,26 +1,27 @@
-const data = require('./data.js');
+import get_player from './data.js'
+console.log(get_player)
 const team_vs =  function(team_a,team_b){
+debugger;
     var temp_team_a = [];
     var temp_team_b = [];
     for(var i=0;i<5;i++){
-        var player_a = data.get_player(team_a[i][2]);
-        var player_b = data.get_player(team_b[i][2]);
-        
+        var player_a = get_player(team_a[i].avatorId);
+        var player_b = get_player(team_b[i].avatorId);
         temp_team_a.push(
             {
-                card_id:team_a[i][0],
-                player_id:team_a[i][2],
-                player_attack:team_a[i][3]*0.01+player_a.playerAttackValue,
-                player_defend:team_a[i][3]*0.01+player_a.playerDefendValue,
-                player_speed:team_a[i][3]*0.01+player_a.playerSpeedValue
+                card_id:team_a[i].cardId,
+                player_id:team_a[i].avatorId,
+                player_attack:team_a[i].level*0.01+player_a.playerAttackValue,
+                player_defend:team_a[i].level*0.01+player_a.playerDefendValue,
+                player_speed:team_a[i].level*0.01+player_a.playerSpeedValue
             });
         temp_team_b.push(
             {
-                card_id:team_b[i][0],
-                player_id:team_b[i][2],
-                player_attack:team_b[i][3]*0.01+player_b.playerAttackValue,
-                player_defend:team_b[i][3]*0.01+player_b.playerDefendValue,
-                player_speed:team_b[i][3]*0.01+player_b.playerSpeedValue
+                card_id:team_b[i].cardId,
+                player_id:team_b[i].avatorId,
+                player_attack:team_b[i].level*0.01+player_b.playerAttackValue,
+                player_defend:team_b[i].level*0.01+player_b.playerDefendValue,
+                player_speed:team_b[i].level*0.01+player_b.playerSpeedValue
             });
     }
     var team = create_contest_team(temp_team_a,temp_team_b);
@@ -119,6 +120,4 @@ const create_contest_team =  function(team_a,team_b) {
     res_b.push(team_b[0]);
     return [res_a,res_b];
  }
-module.exports = {
-    team_vs
-}
+export default team_vs

@@ -4,7 +4,7 @@
       <img class='logo' src="./assets/img/logo.png">
       <h1 style='font-style: italic;border-bottom: 2px solid;border-top: 2px solid;'>Football On Chain</h1>
       <div class='user-box'>
-        <span v-if='userName'>{{userName}} · <span style='font-size:16px;'>体力 <span style='display:inline-block;width:20px;'>{{power}}</span></span></span>
+        <span style='font-size:16px;'>体力 <span style='display:inline-block;width:20px;'>{{power}}</span></span>
       </div>
     </el-header>
     <el-container class='wrapper'>
@@ -22,11 +22,11 @@
     <div class="top-btn">
       <span>获取球员</span>
     </div>
-    <div v-show='freeFlag' class="free-btn hand no-hover" @click='getFree'>
+    <!-- <div v-show='freeFlag' class="free-btn hand no-hover" @click='getFree'>
       <el-tooltip class="item" effect="dark" content="新玩家限一次，免费抽取5名球员" placement="right">
         <i class="fa" style='font-size:30px;'>free!</i>
       </el-tooltip>
-    </div>
+    </div> -->
     <div v-show='commonPrice' class="normal-btn free-btn hand no-hover" @click='getCommon'>
       <el-tooltip class="item" effect="dark" content="较少花费，抽取1名普通球员" placement="right">
         <i class="fa fa-gift" aria-hidden="true"></i>
@@ -71,19 +71,13 @@ export default {
   methods: {
     async init() {
     },
-    // async getFree() {
-    //   let data = await (await this.$football()).
-    //   let data = await this.$call(0, "get_free_card", "");
-    //   this.$message({
-    //     showClose: true,
-    //     duration: 0,
-    //     message: "请在区块链交易成功后，刷新页面！"
-    //   });
-    // },
+    async getFree() {
+      
+    },
     async getCommon() {
       let value = this.getItem("commonPrice");
-      let price = +value / 1000000000000000000;
-      let data = await (await this.$football()).buy_common_card(price).send();
+      // let price = +value / 1; //todo
+      let data = await (await this.$football()).buy_common_card(3000000).send();
       // let data = await this.$call(price, "get_common_card", "");
       this.$message({
         showClose: true,
@@ -93,8 +87,8 @@ export default {
     },
     async getVIP() {
       let value = this.getItem("vipPrice");
-      let price = +value / 1000000000000000000;
-      let data = await (await this.$football()).buy_vip_card(price).send();
+      // let price = +value / 1;
+      let data = await (await this.$football()).buy_vip_card(5000000).send();
       // let data = await this.$call(price, "get_vip_card", "");
       this.$message({
         showClose: true,
@@ -104,8 +98,8 @@ export default {
     },
     async getPower() {
       let value = this.getItem("powerPrice");
-      let price = +value / 1000000000000000000;
-      let data = await (await this.$football()).buy_power(price).send();
+      // let price = +value / 1;
+      let data = await (await this.$football()).buy_power(5).send();
       // let data = await this.$call(price, "get_power", "");
       this.$message({
         showClose: true,
@@ -113,15 +107,15 @@ export default {
         message: "请在区块链交易成功后，刷新页面！"
       });
     },
-    // async getFreePower() {
-    //
-    //   let data = await this.$call(0, "get_free_power", "");
-    //   this.$message({
-    //     showClose: true,
-    //     duration: 0,
-    //     message: "请在区块链交易成功后，刷新页面！"
-    //   });
-    // },
+    async getFreePower() {
+  console.log('freepower!')
+      let data = await (await this.$football()).get_power_power().send();
+      this.$message({
+        showClose: true,
+        duration: 0,
+        message: "请在区块链交易成功后，刷新页面！"
+      });
+    },
     handlePowerTip(power) {
       if (!isNaN(power) && power <= 0) {
         Vue.prototype.$message({

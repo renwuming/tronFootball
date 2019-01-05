@@ -2411,6 +2411,4 @@ var player = [
 const get_player =  function(playerId){
     return player[playerId]
 }
-module.exports = {
-    get_player
-}
+export default get_player

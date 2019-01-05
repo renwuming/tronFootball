@@ -30,17 +30,17 @@ export default {
     },
     attack() {
       if(this.data.shoot)
-        return +this.data.shoot + +this.data.shoot_factor * +this.data.growth
+        return +this.data.shoot * (1 + +this.data.level)
       else return null
     },
     defend() {
       if(this.data.defend)
-        return +this.data.defend + +this.data.defend_factor * +this.data.growth
+        return +this.data.defend * (1 + +this.data.level)
       else return null
     },
     speed() {
       if(this.data.speed)
-        return +this.data.speed + +this.data.speed_factor * +this.data.growth
+        return +this.data.speed * (1 + +this.data.level)
       else return null
     },
   },

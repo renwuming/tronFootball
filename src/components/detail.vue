@@ -1,18 +1,20 @@
 <template>
-  <div class='wrapper'>
-    <h1><span class='title'>{{data.player_name}}</span><span v-if='data.position==2' class='tag'>{{data.position | position}}</span></h1>
-    <div class='main'>
+  <div class="wrapper">
+    <h1>
+      <span class="title">{{data.player_name}}</span>
+      <span v-if="data.position==2" class="tag">{{data.position | position}}</span>
+    </h1>
+    <div class="main">
       <div class="img-box">
         <img :src="data.avator">
       </div>
       <div class="radar-box">
-        <div class='chart' ref='radar'></div>
+        <div class="chart" ref="radar"></div>
       </div>
     </div>
-    <p class='grow-value'>
-      成长值：
+    <p class="grow-value">成长值：
       <br>
-      <var>{{data.growth | value}}</var>
+      <var>{{data.level | value}}</var>
     </p>
   </div>
 </template>
@@ -22,28 +24,26 @@ export default {
   props: {
     data: {
       default: _ => {
-        return {}
-      },
-    },
+        return {};
+      }
+    }
   },
   components: {},
   data() {
-    return {
-
-    };
+    return {};
   },
   computed: {
     realShoot() {
-      let data = this.data
-      return +data.shoot + +data.shoot_factor * +data.growth
+      let data = this.data;
+      return +this.data.shoot * (1 + +this.data.level);
     },
     realDefend() {
-      let data = this.data
-      return +data.defend + +data.defend_factor * +data.growth
+      let data = this.data;
+      return +this.data.defend * (1 + +this.data.level);
     },
     realSpeed() {
-      let data = this.data
-      return +data.speed + +data.speed_factor * +data.growth
+      let data = this.data;
+      return +this.data.speed * (1 + +this.data.level);
     },
     option() {
       const obj = {
@@ -73,7 +73,12 @@ export default {
           splitNumber: 4,
           splitArea: {
             areaStyle: {
-              color: ["transparent", "transparent", "transparent", "transparent"]
+              color: [
+                "transparent",
+                "transparent",
+                "transparent",
+                "transparent"
+              ]
             }
           },
           axisLine: {
@@ -86,8 +91,7 @@ export default {
               color: "rgba(255, 255, 255, 1)"
             }
           },
-          indicator: [
-          ]
+          indicator: []
         },
         series: [
           {
@@ -101,31 +105,31 @@ export default {
             data: [
               {
                 name: "综合能力"
-              },
+              }
             ]
           }
         ]
-      }
-      const colorMap = ["#FF0033","#FFCC33","#0099CC"]
-      const nameMap = ['进攻','防守','速度']
-      const vlist = [this.realShoot,this.realDefend,this.realSpeed]
-      const max = this.getMax(vlist)
-      obj.series[0].data[0].value = vlist
-      obj.radar.indicator = vlist.map((value,index) => {
-        value = parseFloat(value).toFixed(2)
+      };
+      const colorMap = ["#FF0033", "#FFCC33", "#0099CC"];
+      const nameMap = ["进攻", "防守", "速度"];
+      const vlist = [this.realShoot, this.realDefend, this.realSpeed];
+      const max = this.getMax(vlist);
+      obj.series[0].data[0].value = vlist;
+      obj.radar.indicator = vlist.map((value, index) => {
+        value = parseFloat(value).toFixed(2);
         return {
           name: `${nameMap[index]}${value}`,
           max,
-          color: colorMap[index],
-        }
-      })
-      return obj
+          color: colorMap[index]
+        };
+      });
+      return obj;
     }
   },
   methods: {
     getMax(list) {
-      const max = Math.max.apply(null, list)
-      return Math.ceil(max/100)*100
+      const max = Math.max.apply(null, list);
+      return Math.ceil(max / 100) * 100;
     }
   },
   mounted() {
@@ -135,7 +139,7 @@ export default {
   },
   watch: {
     data() {
-      this.radar.setOption(this.option)
+      this.radar.setOption(this.option);
     }
   }
 };

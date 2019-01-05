@@ -2,7 +2,7 @@
   <div class='wrapper' :class="{small: small}">
     <h1 v-if='data.player_name&&data.player_name.length <= 7'>{{data.player_name}}</h1>
     <h1 v-else style='font-size:14px'>{{data.player_name || '???'}}</h1>
-    <span v-if="market">成长值：<var v-if='data.growth||data.growth==0'>{{data.growth | value}}</var><var v-else>-</var></span>
+    <span v-if="market">成长值：<var v-if='data.level||data.level==0'>{{data.level | value}}</var><var v-else>-</var></span>
     <div class="img-box">
       <img v-if='data.avator||data.avatorId' :src="data.avator || avator">
       <i v-else class="fa fa-spinner fa-pulse fa-3x fa-fw" style='margin-top:30px;font-size:36px;'></i>
@@ -47,17 +47,17 @@ export default {
     },
     attack() {
       if(this.data.shoot)
-        return +this.data.shoot + +this.data.shoot_factor * +this.data.growth
+        return +this.data.shoot * (1 + +this.data.level)
       else return null
     },
     defend() {
       if(this.data.defend)
-        return +this.data.defend + +this.data.defend_factor * +this.data.growth
+        return +this.data.defend * (1 + +this.data.level)
       else return null
     },
     speed() {
       if(this.data.speed)
-        return +this.data.speed + +this.data.speed_factor * +this.data.growth
+        return +this.data.speed * (1 + +this.data.level)
       else return null
     },
   },

@@ -99,7 +99,7 @@ common.install = function (Vue) {
         if (!item.player_name || !item.avatorId) return
         map[item.cardId] = {
           cardId: item.cardId,
-          avatorId: item.avatorId,
+          avatorId: `${item.avatorId}`,
           player_name: item.player_name,
         }
       })
@@ -110,7 +110,7 @@ common.install = function (Vue) {
       else {
         map[item.cardId] = {
           cardId: item.cardId,
-          avatorId: item.avatorId,
+          avatorId: `${item.avatorId}`,
           player_name: item.player_name,
         }
       }
