@@ -35,15 +35,15 @@ export default {
   computed: {
     realShoot() {
       let data = this.data;
-      return +this.data.shoot * (1 + +this.data.level);
+      return +this.data.shoot * (1 + +this.data.level/100);
     },
     realDefend() {
       let data = this.data;
-      return +this.data.defend * (1 + +this.data.level);
+      return +this.data.defend * (1 + +this.data.level/100);
     },
     realSpeed() {
       let data = this.data;
-      return +this.data.speed * (1 + +this.data.level);
+      return +this.data.speed * (1 + +this.data.level/100);
     },
     option() {
       const obj = {

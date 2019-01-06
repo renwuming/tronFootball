@@ -47,17 +47,17 @@ export default {
     },
     attack() {
       if(this.data.shoot)
-        return +this.data.shoot * (1 + +this.data.level)
+        return +this.data.shoot * (1 + +this.data.level/100)
       else return null
     },
     defend() {
       if(this.data.defend)
-        return +this.data.defend * (1 + +this.data.level)
+        return +this.data.defend * (1 + +this.data.level/100)
       else return null
     },
     speed() {
       if(this.data.speed)
-        return +this.data.speed * (1 + +this.data.level)
+        return +this.data.speed * (1 + +this.data.level/100)
       else return null
     },
   },
