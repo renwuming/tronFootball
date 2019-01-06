@@ -61,7 +61,7 @@ export default {
       let player_list = [];
       for (let j = start; j < end; j++) {
         let players = {
-          cardId: j + Math.random(),
+          cardId: `${j}${Math.random()}`,
           player_name: null,
           shoot: 0,
           defend: 0,

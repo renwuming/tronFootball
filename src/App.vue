@@ -41,11 +41,11 @@
     <div class="top-btn-right">
       <span>补充体力</span>
     </div>
-    <div class="free-power-btn hand no-hover" @click='getFreePower'>
+    <!-- <div class="free-power-btn hand no-hover" @click='getFreePower'>
       <el-tooltip class="item" effect="dark" content="每天一次，免费增加5点体力" placement="left">
         <i class="fa fa-medkit" aria-hidden="true"></i>
       </el-tooltip>
-    </div>
+    </div> -->
     <div v-show='powerPrice' class="power-btn free-power-btn hand no-hover" @click='getPower'>
       <el-tooltip class="item" effect="dark" content="较少花费，增加5点体力" placement="left">
         <i class="fa fa-medkit" aria-hidden="true"></i>
@@ -328,7 +328,7 @@ h1 {
   }
 }
 .power-btn {
-  top: 220px;
+  // top: 220px;
   border: 2px solid #fe5882;
   &:hover {
     background-color: #fe5882;

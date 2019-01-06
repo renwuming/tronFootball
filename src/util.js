@@ -1,7 +1,6 @@
 import get_player from './data.js'
 
 const team_vs =  function(team_a,team_b){
-debugger;
     var temp_team_a = [];
     var temp_team_b = [];
     for(var i=0;i<5;i++){

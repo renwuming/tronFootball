@@ -16,43 +16,58 @@ Vue.use(filter)
 
 Vue.prototype.$preUrl = 'https://sec-cdn.static.xiaomi.net/secStatic/groups/miui-sec/rentianfu/football/player_img/'
 
-const HttpProvider = TronWeb.providers.HttpProvider;
-const fullNode = new HttpProvider('https://api.shasta.trongrid.io'); // Full node http endpoint
-const solidityNode = new HttpProvider('https://api.shasta.trongrid.io'); // Solidity node http endpoint
-const eventServer = new HttpProvider('https://api.shasta.trongrid.io'); // Contract events http endpoint
 
 import config from './config'
 import getPlayer from './data'
 
 Vue.prototype.$getPlayer = getPlayer
 
-Vue.prototype.$tronWeb = new TronWeb(
-  fullNode,
-  solidityNode,
-  eventServer,
-  config.privateKey
-)
+async function getContract(contract, addr) {
+  let T = {}
+  // 1. check variable, 检查tronweb是否已经加载
+  if (window.tronWeb) {
+    // 2. check node connection，检查所需要的API是否都可以连通
+    const nodes = await tronWeb.isConnected();
+    const connected = !Object.entries(nodes).map(([name, connected]) => {
+      if (!connected) {
+        console.error(`Error: ${name} is not connected`);
+      }
+      return connected;
+    }).includes(false);
+    if (connected) {
+      T = await tronWeb.contract(contract.abi, addr)
+      return T
+    } else {
+      console.error('wait for tronLink');
+      await sleep(100)
+      T = await getContract(contract, addr)
+      return T
+    }
+  } else {
+    // 如果检测到没有注入tronWeb对象，则等待100ms后重新检测
+    console.error('wait for tronLink');
+    await sleep(100)
+    T = await getContract(contract, addr)
+    return T
+  }
+};
 
-const addr = '41fb44420358e0f02bd24d5bffec680537f25dbae2';
+function sleep(delay) {
+  return new Promise(resolve => {
+    setTimeout(resolve, delay)
+  })
+}
+
+const addr = '4157889ccd96bae98a123b1aba1f041d38b7f7e4de';
 
 // 合约地址
 Vue.prototype.$addr = addr
 
-// 合约实例
 Vue.prototype.$football = async function () {
-  let res = await await Vue.prototype.$tronWeb.contract(contract.abi, Vue.prototype.$addr)
-  return res
+  let T = await getContract(contract, addr)
+  return T
 }
-//
-// Vue.prototype.$call = function(value, callFunction, callArgs) {
-//   return new Promise(resolve => {
-//     Vue.prototype.$NebPay.call(addr, value, callFunction, callArgs, {
-//       listener: resp => {
-//         resolve(resp.result)
-//       },
-//     });
-//   })
-// }
+
 
 Vue.use(Vuex)
 const store = new Vuex.Store({
@@ -92,25 +107,10 @@ router.beforeEach(async (to, from, next) => {
 });
 
 async function init() {
+  let fb = await Vue.prototype.$football()
+  console.log(fb)
   const self = Vue.prototype
 
-  // Vue.prototype.$simulateCall(0, "user_login", "").then(data => {
-  //   data = JSON.parse(data);
-  //   if (data instanceof Object) {
-  //     const teamList = data.team ? data.team.split("_").filter(e => !!e) : []
-  //     store.commit({
-  //       type: 'update',
-  //       userName: data.user_name,
-  //       freeFlag: data.user_free != '1',
-  //       teamList,
-  //     })
-  //   } else {
-  //     store.commit({
-  //       type: 'update',
-  //       freeFlag: true,
-  //     })
-  //   }
-  // })
   let user_detail = await (await Vue.prototype.$football()).user_login().call()
   console.log('user_detail: ' + user_detail)
 
