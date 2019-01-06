@@ -1,5 +1,5 @@
 import get_player from './data.js'
-console.log(get_player)
+
 const team_vs =  function(team_a,team_b){
 debugger;
     var temp_team_a = [];
