@@ -76,6 +76,7 @@ export default {
   h1 {
     color: #282828;
     font-size: 20px;
+    line-height: 34px;
   }
   .img-box {
     width: 80%;

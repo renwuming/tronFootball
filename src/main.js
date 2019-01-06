@@ -58,7 +58,7 @@ function sleep(delay) {
   })
 }
 
-const addr = '4157889ccd96bae98a123b1aba1f041d38b7f7e4de';
+const addr = '41de2c98fe6a72c0b04ef4712d87fa27eb01513581';
 
 // 合约地址
 Vue.prototype.$addr = addr

@@ -142,12 +142,7 @@ export default {
       this.resultList = [res[0], res[1]];
       this.winFlag = res[0] > res[1] ? true : false;
       console.log(res[2],res[3])
-      for (var i = 0; i < 5; i++) {
-        let attO = this.attackList[i]
-        let defO = this.defenseList[i]
-        await fb.add_level(attO.cardId, res[2]).send();
-        await fb.add_level(defO.cardId, res[3]).send();
-      }
+      fb.add_level(this.attackList.map(e=>e.cardId), this.defenseList.map(e=>e.cardId), res[2], res[3]).send();
     },
     getPlayerByCardId(cardId, playerList) {
       for (let i = 0; i < playerList.length; i++) {
